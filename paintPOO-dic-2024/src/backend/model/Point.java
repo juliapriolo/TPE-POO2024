@@ -1,12 +1,19 @@
 package backend.model;
 
-public class Point {
+import backend.interfaces.Movable;
+
+public class Point implements Movable {
 
     private double x, y;
 
     public Point(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void move(double deltaX, double deltaY){
+        this.x += deltaX;
+        this.y += deltaY;
     }
 
     public double getX() {

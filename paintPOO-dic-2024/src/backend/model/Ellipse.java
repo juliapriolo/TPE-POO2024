@@ -12,6 +12,11 @@ public class Ellipse implements Figure {
     }
 
     @Override
+    public void move(double deltaX, double deltaY){
+        centerPoint.move(deltaX, deltaY);
+    }
+
+    @Override
     public String toString() {
         return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", centerPoint, sMayorAxis, sMinorAxis);
     }
