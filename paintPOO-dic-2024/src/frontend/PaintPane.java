@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public class PaintPane extends BorderPane {
 
@@ -82,28 +83,42 @@ public class PaintPane extends BorderPane {
 			if(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
 				return ;
 			}
-			Figure newFigure = null;
-			if(rectangleButton.isSelected()) {
-				newFigure = new Rectangle(startPoint, endPoint);
+
+			ToggleButton selectedTool = (ToggleButton) tools.getSelectedToggle();
+			if (selectedTool == null) {
+				return;
 			}
-			else if(circleButton.isSelected()) {
-				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Circle(startPoint, circleRadius);
-			} else if(squareButton.isSelected()) {
-				double size = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new Square(startPoint, size);
-			} else if(ellipseButton.isSelected()) {
-				Point centerPoint = new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2));
-				double sMayorAxis = Math.abs(endPoint.getX() - startPoint.getX());
-				double sMinorAxis = Math.abs(endPoint.getY() - startPoint.getY());
-				newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis);
-			} else {
-				return ;
+
+			Map<ToggleButton, BiFunction<Point, Point, Figure>> toolStrategies = new HashMap<>();
+
+			// Inicialización de estrategias
+			toolStrategies.put(rectangleButton, (start, end) -> new Rectangle(start, end));
+			toolStrategies.put(circleButton, (start, end) -> {
+				double radius = Math.abs(end.getX() - start.getX());
+				return new Circle(start, radius);
+			});
+			toolStrategies.put(squareButton, (start, end) -> {
+				double size = Math.abs(end.getX() - start.getX());
+				return new Square(start, size);
+			});
+			toolStrategies.put(ellipseButton, (start, end) -> {
+				Point center = new Point((start.getX() + end.getX()) / 2, (start.getY() + end.getY()) / 2);
+				double majorAxis = Math.abs(end.getX() - start.getX());
+				double minorAxis = Math.abs(end.getY() - start.getY());
+				return new Ellipse(center, majorAxis, minorAxis);
+			});
+
+			BiFunction<Point, Point, Figure> strategy = toolStrategies.get(selectedTool);
+			if (strategy != null) {
+				Figure newFigure = strategy.apply(startPoint, endPoint);
+				if (newFigure != null) {
+					figureColorMap.put(newFigure, fillColorPicker.getValue());
+					canvasState.addFigure(newFigure);
+					redrawCanvas();
+				}
 			}
-			figureColorMap.put(newFigure, fillColorPicker.getValue());
-			canvasState.addFigure(newFigure);
+
 			startPoint = null;
-			redrawCanvas();
 		});
 
 		canvas.setOnMouseMoved(event -> {
