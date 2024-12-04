@@ -146,34 +146,16 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMouseDragged(event -> {
-			if(selectionButton.isSelected()) {
+			if (selectionButton.isSelected() && selectedFigure != null) {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
 				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
-				if(selectedFigure instanceof Rectangle) {
-					Rectangle rectangle = (Rectangle) selectedFigure;
-					rectangle.getTopLeft().incrementX(diffX);
-					rectangle.getBottomRight().incrementX(diffX);
-					rectangle.getTopLeft().incrementY(diffY);
-					rectangle.getBottomRight().incrementY(diffY);
-				} else if(selectedFigure instanceof Circle) {
-					Circle circle = (Circle) selectedFigure;
-					circle.getCenterPoint().incrementX(diffX);
-					circle.getCenterPoint().incrementY(diffY);
-				} else if(selectedFigure instanceof Square) {
-					Square square = (Square) selectedFigure;
-					square.getTopLeft().incrementX(diffX);
-					square.getBottomRight().incrementX(diffX);
-					square.getTopLeft().incrementY(diffY);
-					square.getBottomRight().incrementY(diffY);
-				} else if(selectedFigure instanceof Ellipse) {
-					Ellipse ellipse = (Ellipse) selectedFigure;
-					ellipse.getCenterPoint().incrementX(diffX);
-					ellipse.getCenterPoint().incrementY(diffY);
-				}
+
+				selectedFigure.move(diffX, diffY);
 				redrawCanvas();
 			}
 		});
+
 
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
