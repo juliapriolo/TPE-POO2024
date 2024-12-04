@@ -24,11 +24,11 @@ public class Point implements Movable {
         return y;
     }
 
-    public void setPointX(double x) {
+    public void incrementX(double x) {
         this.x += x;
     }
 
-    public void setPointY(double y) {
+    public void incrementY(double y) {
         this.y += y;
     }
 

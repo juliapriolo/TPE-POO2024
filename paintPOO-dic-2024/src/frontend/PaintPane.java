@@ -1,6 +1,7 @@
 package frontend;
 
 import backend.CanvasState;
+import backend.interfaces.Figure;
 import backend.model.*;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -37,6 +38,7 @@ public class PaintPane extends BorderPane {
 
 	// Selector de color de relleno
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
+
 
 	// Dibujar una figura
 	Point startPoint;
@@ -150,24 +152,24 @@ public class PaintPane extends BorderPane {
 				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
 				if(selectedFigure instanceof Rectangle) {
 					Rectangle rectangle = (Rectangle) selectedFigure;
-					rectangle.getTopLeft().setPointX(diffX);
-					rectangle.getBottomRight().setPointX(diffX);
-					rectangle.getTopLeft().setPointY(diffY);
-					rectangle.getBottomRight().setPointY(diffY);
+					rectangle.getTopLeft().incrementX(diffX);
+					rectangle.getBottomRight().incrementX(diffX);
+					rectangle.getTopLeft().incrementY(diffY);
+					rectangle.getBottomRight().incrementY(diffY);
 				} else if(selectedFigure instanceof Circle) {
 					Circle circle = (Circle) selectedFigure;
-					circle.getCenterPoint().setPointX(diffX);
-					circle.getCenterPoint().setPointY(diffY);
+					circle.getCenterPoint().incrementX(diffX);
+					circle.getCenterPoint().incrementY(diffY);
 				} else if(selectedFigure instanceof Square) {
 					Square square = (Square) selectedFigure;
-					square.getTopLeft().setPointX(diffX);
-					square.getBottomRight().setPointX(diffX);
-					square.getTopLeft().setPointY(diffY);
-					square.getBottomRight().setPointY(diffY);
+					square.getTopLeft().incrementX(diffX);
+					square.getBottomRight().incrementX(diffX);
+					square.getTopLeft().incrementY(diffY);
+					square.getBottomRight().incrementY(diffY);
 				} else if(selectedFigure instanceof Ellipse) {
 					Ellipse ellipse = (Ellipse) selectedFigure;
-					ellipse.getCenterPoint().setPointX(diffX);
-					ellipse.getCenterPoint().setPointY(diffY);
+					ellipse.getCenterPoint().incrementX(diffX);
+					ellipse.getCenterPoint().incrementY(diffY);
 				}
 				redrawCanvas();
 			}
@@ -187,59 +189,15 @@ public class PaintPane extends BorderPane {
 
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for(Figure figure : canvasState.figures()) {
-			if(figure == selectedFigure) {
-				gc.setStroke(Color.RED);
-			} else {
-				gc.setStroke(lineColor);
-			}
-			gc.setFill(figureColorMap.get(figure));
-			if(figure instanceof Rectangle) {
-				Rectangle rectangle = (Rectangle) figure;
-				gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-				gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-			} else if(figure instanceof Circle) {
-				Circle circle = (Circle) figure;
-				double diameter = circle.getRadius() * 2;
-				gc.fillOval(circle.getCenterPoint().getX() - circle.getRadius(), circle.getCenterPoint().getY() - circle.getRadius(), diameter, diameter);
-				gc.strokeOval(circle.getCenterPoint().getX() - circle.getRadius(), circle.getCenterPoint().getY() - circle.getRadius(), diameter, diameter);
-			} else if(figure instanceof Square) {
-				Square square = (Square) figure;
-				gc.fillRect(square.getTopLeft().getX(), square.getTopLeft().getY(),
-						Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-				gc.strokeRect(square.getTopLeft().getX(), square.getTopLeft().getY(),
-						Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-			} else if(figure instanceof Ellipse) {
-				Ellipse ellipse = (Ellipse) figure;
-				gc.strokeOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2), ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2), ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
-				gc.fillOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2), ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2), ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
-			}
+		for (Figure figure : canvasState.figures()) {
+			Color fillColor = figureColorMap.get(figure);
+			Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
+			figure.draw(gc, fillColor, strokeColor);
 		}
 	}
 
 	boolean figureBelongs(Figure figure, Point eventPoint) {
-		boolean found = false;
-		if(figure instanceof Rectangle) {
-			Rectangle rectangle = (Rectangle) figure;
-			found = eventPoint.getX() > rectangle.getTopLeft().getX() && eventPoint.getX() < rectangle.getBottomRight().getX() &&
-					eventPoint.getY() > rectangle.getTopLeft().getY() && eventPoint.getY() < rectangle.getBottomRight().getY();
-		} else if(figure instanceof Circle) {
-			Circle circle = (Circle) figure;
-			found = Math.sqrt(Math.pow(circle.getCenterPoint().getX() - eventPoint.getX(), 2) +
-					Math.pow(circle.getCenterPoint().getY() - eventPoint.getY(), 2)) < circle.getRadius();
-		} else if(figure instanceof Square) {
-			Square square = (Square) figure;
-			found = eventPoint.getX() > square.getTopLeft().getX() && eventPoint.getX() < square.getBottomRight().getX() &&
-					eventPoint.getY() > square.getTopLeft().getY() && eventPoint.getY() < square.getBottomRight().getY();
-		} else if(figure instanceof Ellipse) {
-			Ellipse ellipse = (Ellipse) figure;
-			// Nota: Fórmula aproximada. No es necesario corregirla.
-			found = ((Math.pow(eventPoint.getX() - ellipse.getCenterPoint().getX(), 2) / Math.pow(ellipse.getsMayorAxis(), 2)) +
-					(Math.pow(eventPoint.getY() - ellipse.getCenterPoint().getY(), 2) / Math.pow(ellipse.getsMinorAxis(), 2))) <= 0.30;
-		}
-		return found;
+		return figure.contains(eventPoint);
 	}
 
 }
