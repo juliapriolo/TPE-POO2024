@@ -4,6 +4,7 @@ import backend.interfaces.Figure;
 import backend.model.Point;
 import frontend.model.DrawFigure;
 import frontend.model.DrawableRectangle;
+import frontend.model.DrawableSquare;
 
 public class SquareButton extends FigureButton{
     public SquareButton(String name) {
@@ -17,6 +18,6 @@ public class SquareButton extends FigureButton{
 
     @Override
     public DrawFigure createDrawFigure(Point startPoint, Point endPoint) {
-        return new DrawableRectangle(startPoint, endPoint);
+        return new DrawableSquare(startPoint, endPoint);
     }
 }
