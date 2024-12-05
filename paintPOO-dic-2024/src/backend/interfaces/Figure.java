@@ -8,7 +8,6 @@ public interface Figure extends Movable{ //ver despues si queda figure como inte
 
     void move(double deltaX, double deltaY);
 
-    void draw(GraphicsContext gc, Color fillColor, Color strokeColor);
 
     boolean contains(Point eventPoint);
 }

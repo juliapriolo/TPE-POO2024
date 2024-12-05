@@ -32,22 +32,7 @@ public class Ellipse implements Figure {
         return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", centerPoint, sMayorAxis, sMinorAxis);
     }
 
-    @Override
-    public void draw(GraphicsContext gc, Color fillColor, Color strokeColor) {
-        // Cálculo de los valores de posición y dimensiones de la elipse
-        double x = centerPoint.getX() - sMayorAxis / 2;
-        double y = centerPoint.getY() - sMinorAxis / 2;
-        double width = sMayorAxis;
-        double height = sMinorAxis;
 
-        // Configuración de colores de relleno y borde
-        gc.setFill(fillColor);
-        gc.setStroke(strokeColor);
-
-        // Dibuja la elipse (relleno y borde)
-        gc.fillOval(x, y, width, height);
-        gc.strokeOval(x, y, width, height);
-    }
 
     @Override
     public void move(double deltaX, double deltaY){

@@ -3,6 +3,7 @@ package frontend;
 import backend.CanvasState;
 import backend.interfaces.Figure;
 import backend.model.*;
+import frontend.model.DrawFigure;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -189,9 +190,11 @@ public class PaintPane extends BorderPane {
 		for (Figure figure : canvasState.figures()) {
 			Color fillColor = figureColorMap.get(figure);
 			Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
-			figure.draw(gc, fillColor, strokeColor);
+			((DrawFigure)figure).draw(gc, fillColor, strokeColor);
 		}
 	}
+
+	
 
 	boolean figureBelongs(Figure figure, Point eventPoint) {
 		return figure.contains(eventPoint);

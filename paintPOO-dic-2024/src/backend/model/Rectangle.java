@@ -32,15 +32,7 @@ public class Rectangle implements Figure {
         bottomRight.move(deltaX, deltaY);
     }
 
-    @Override
-    public void draw(GraphicsContext gc, Color fillColor, Color strokeColor) {
-        double width = Math.abs(topLeft.getX() - bottomRight.getX());
-        double height = Math.abs(topLeft.getY() - bottomRight.getY());
-        gc.setFill(fillColor);
-        gc.setStroke(strokeColor);
-        gc.fillRect(topLeft.getX(), topLeft.getY(), width, height);
-        gc.strokeRect(topLeft.getX(), topLeft.getY(), width, height);
-    }
+
 
     @Override
     public boolean contains(Point eventPoint) {

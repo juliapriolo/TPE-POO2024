@@ -2,8 +2,7 @@ package frontend.buttons;
 
 import backend.interfaces.Figure;
 import backend.model.Point;
-import frontend.model.DrawableSquare;
-import javafx.scene.canvas.GraphicsContext;
+import frontend.model.DrawableRectangle;
 
 public class SquareButton extends FigureButton{
     public SquareButton(String name) {
@@ -12,7 +11,6 @@ public class SquareButton extends FigureButton{
 
     @Override
     public Figure create(Point startPoint, Point endPoint) {
-        double size = Math.abs(endPoint.getX() - startPoint.getX());
-        return new DrawableSquare(startPoint, size);
+        return (Figure) new DrawableRectangle(startPoint, endPoint);
     }
 }
