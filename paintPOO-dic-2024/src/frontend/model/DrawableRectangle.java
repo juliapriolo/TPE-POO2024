@@ -17,13 +17,20 @@ public class DrawableRectangle extends DrawFigure {
 
     @Override
     public void draw(GraphicsContext gc, Color fillColor, Color strokeColor) {
+
+        double x = Math.min(rectangle.getTopLeft().getX(), rectangle.getBottomRight().getX());
+        double y = Math.min(rectangle.getTopLeft().getY(), rectangle.getBottomRight().getY());
+
         double width = Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX());
         double height = Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY());
+
         gc.setFill(fillColor);
         gc.setStroke(strokeColor);
-        gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getBottomRight().getY(), width, height);
-        gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(), width, height);
+        
+        gc.fillRect(x, y, width, height);
+        gc.strokeRect(x, y, width, height);
     }
+
 
     @Override
     public Figure getFigure() {
