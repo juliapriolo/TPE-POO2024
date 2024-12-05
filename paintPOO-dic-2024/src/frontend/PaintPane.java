@@ -1,7 +1,7 @@
 package frontend;
 
-import backend.CanvasState;
 import backend.interfaces.Figure;
+import backend.CanvasState;
 import backend.model.*;
 import frontend.buttons.*;
 import frontend.model.DrawFigure;
@@ -90,16 +90,19 @@ public class PaintPane extends BorderPane {
 			}
 
 			Figure newFigure = null;
+			FigureButton newButton = null;
 
 			for(FigureButton button : figureButtons) {
 				if(button.isSelected() ) {
-					newFigure = button.create(startPoint, endPoint);
+					newFigure = button.createDrawFigure(startPoint, endPoint).getFigure();
+					newButton = button;
+					figureColorMap.put(newFigure, fillColorPicker.getValue());
+					canvasState.addFigure(newFigure);
+					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint));
+					startPoint = null;
+					redrawCanvas();
 				}
 			}
-			figureColorMap.put(newFigure, fillColorPicker.getValue());
-			canvasState.addFigure(newFigure);
-			startPoint = null;
-			redrawCanvas();
 		});
 
 		canvas.setOnMouseMoved(event -> {
@@ -167,34 +170,9 @@ public class PaintPane extends BorderPane {
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
-			if(figure == selectedFigure) {
-				gc.setStroke(Color.RED);
-			} else {
-				gc.setStroke(lineColor);
-			}
+			Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
 			gc.setFill(figureColorMap.get(figure));
-			if(figure instanceof Rectangle) {
-				Rectangle rectangle = (Rectangle) figure;
-				gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-				gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-			} else if(figure instanceof Circle) {
-				Circle circle = (Circle) figure;
-				double diameter = circle.getRadius() * 2;
-				gc.fillOval(circle.getCenterPoint().getX() - circle.getRadius(), circle.getCenterPoint().getY() - circle.getRadius(), diameter, diameter);
-				gc.strokeOval(circle.getCenterPoint().getX() - circle.getRadius(), circle.getCenterPoint().getY() - circle.getRadius(), diameter, diameter);
-			} else if(figure instanceof Square) {
-				Square square = (Square) figure;
-				gc.fillRect(square.getTopLeft().getX(), square.getTopLeft().getY(),
-						Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-				gc.strokeRect(square.getTopLeft().getX(), square.getTopLeft().getY(),
-						Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-			} else if(figure instanceof Ellipse) {
-				Ellipse ellipse = (Ellipse) figure;
-				gc.strokeOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2), ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2), ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
-				gc.fillOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2), ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2), ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
-			}
+			drawFigures.get(figure).draw(gc, figureColorMap.get(figure), strokeColor);
 		}
 	}
 

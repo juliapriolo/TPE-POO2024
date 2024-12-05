@@ -10,8 +10,8 @@ public class DrawableEllipse extends DrawFigure {
 
     private final Ellipse ellipse;
 
-    public DrawableEllipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
-        this.ellipse = new Ellipse(centerPoint, sMayorAxis, sMinorAxis);
+    public DrawableEllipse(Point centerPoint, double sMinorAxis, double sMajorAxis) {
+        this.ellipse = new Ellipse(centerPoint, sMajorAxis, sMinorAxis);
     }
 
     @Override

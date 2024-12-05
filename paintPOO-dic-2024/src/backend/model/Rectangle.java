@@ -30,8 +30,8 @@ public class Rectangle implements Figure {
     public void move(double deltaX, double deltaY){
         topLeft.move(deltaX, deltaY);
         bottomRight.move(deltaX, deltaY);
-    }
 
+    }
 
 
     @Override

@@ -11,12 +11,9 @@ public class DrawableRectangle extends DrawFigure {
 
     private final Rectangle rectangle;
 
-
     public DrawableRectangle(Point topLeft, Point bottomRight) {
         this.rectangle = new Rectangle(topLeft, bottomRight);
     }
-
-
 
     @Override
     public void draw(GraphicsContext gc, Color fillColor, Color strokeColor) {
