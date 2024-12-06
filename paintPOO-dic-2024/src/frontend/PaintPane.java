@@ -5,6 +5,8 @@ import backend.CanvasState;
 import backend.model.*;
 import frontend.buttons.*;
 import frontend.model.DrawFigure;
+import frontend.model.FigureInfo;
+import frontend.model.ShadowType;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -29,6 +31,7 @@ public class PaintPane extends BorderPane {
 	GraphicsContext gc = canvas.getGraphicsContext2D(); // permite dibujar las figuras, lineas, texto, imagen
 	Color lineColor = Color.BLACK; // por deafult, la lineas tiene que ser negras
 	Color defaultFillColor = Color.YELLOW; // por default el color de las formas es amarillo
+	ShadowType defaultShadowType = ShadowType.NONE;
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
@@ -40,6 +43,7 @@ public class PaintPane extends BorderPane {
 
 	// Selector de color de relleno
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
+	ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor); // inicializa el segundo color que se va a usar para hacer el difuminado
 
 	// Dibujar una figura
 	Point startPoint; // de donde arrancar a dibujar
@@ -52,6 +56,9 @@ public class PaintPane extends BorderPane {
 
 	// Colores de relleno de cada figura
 	Map<Figure, Color> figureColorMap = new HashMap<>(); //cada figura con su color de relleno
+
+	//Informacion para cada figura
+	Map<Figure, FigureInfo> figureInfoMap = new HashMap<>();
 
 	FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
 
@@ -73,6 +80,7 @@ public class PaintPane extends BorderPane {
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
 		buttonsBox.getChildren().add(fillColorPicker);
+		buttonsBox.getChildren().add(secondFillColorPicker);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -96,6 +104,8 @@ public class PaintPane extends BorderPane {
 				if(button.isSelected() ) {
 					newFigure = button.createDrawFigure(startPoint, endPoint).getFigure();
 					newButton = button;
+
+					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), startPoint, endPoint, defaultShadowType));
 					figureColorMap.put(newFigure, fillColorPicker.getValue());
 					canvasState.addFigure(newFigure);
 					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint));
@@ -164,15 +174,31 @@ public class PaintPane extends BorderPane {
 		});
 		setLeft(buttonsBox);
 		setRight(canvas);
-	}
 
+		fillColorPicker.setOnAction(event -> {
+			if (selectedFigure != null && selectionButton.isSelected()) {
+				// Actualiza el primer color en figureInfoMap
+				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+				figureInfo.setColor(fillColorPicker.getValue());
+				redrawCanvas();
+			}
+		});
+
+		secondFillColorPicker.setOnAction(event -> {
+			if (selectedFigure != null && selectionButton.isSelected()) {
+				// Actualiza el segundo color en figureInfoMap
+				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+				figureInfo.setSecondaryColor(secondFillColorPicker.getValue());
+				redrawCanvas();
+			}
+		});
+	}
 
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
 			Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
-			gc.setFill(figureColorMap.get(figure));
-			drawFigures.get(figure).draw(gc, figureColorMap.get(figure), strokeColor);
+			drawFigures.get(figure).draw(gc, figureInfoMap.get(figure).getColor(), figureInfoMap.get(figure).getSecondaryColor(), strokeColor);
 		}
 	}
 
