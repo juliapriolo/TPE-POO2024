@@ -10,7 +10,8 @@ public class DrawableEllipse extends DrawFigure {
 
     private final Ellipse ellipse;
 
-    public DrawableEllipse(Point centerPoint, double sMinorAxis, double sMajorAxis) {
+    public DrawableEllipse(Point centerPoint, double sMinorAxis, double sMajorAxis, FigureInfo info) {
+        super(info);
         this.ellipse = new Ellipse(centerPoint, sMajorAxis, sMinorAxis);
     }
 
@@ -21,6 +22,8 @@ public class DrawableEllipse extends DrawFigure {
         double y = ellipse.getCenterPoint().getY() - ellipse.getsMinorAxis() / 2;
         double width = ellipse.getsMayorAxis();
         double height = ellipse.getsMinorAxis();
+
+        setShadowOval(gc, ellipse.getCenterPoint(), ellipse.getsMinorAxis(), ellipse.getsMayorAxis());
 
         // Configuración de colores de relleno y borde
         gc.setFill(getGradientColor(firstFillColor, secondFirstColor));

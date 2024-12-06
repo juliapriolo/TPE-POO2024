@@ -12,7 +12,8 @@ import javafx.scene.paint.Stop;
 public class DrawableCircle extends DrawFigure{
     private final Circle circle;
 
-    public DrawableCircle(Point centerPoint, double radius){
+    public DrawableCircle(Point centerPoint, double radius, FigureInfo info){
+        super(info);
         this.circle = new Circle(centerPoint, radius);
     }
 
@@ -21,6 +22,8 @@ public class DrawableCircle extends DrawFigure{
         double x = circle.getCenterPoint().getX() - circle.getRadius() / 2;
         double y = circle.getCenterPoint().getY() - circle.getRadius() / 2;
         double radius = circle.getRadius();
+
+        setShadowOval(gc, circle.getCenterPoint(), circle.getRadius(), circle.getRadius());
 
         gc.setFill(getGradientColor(firstFillColor, secondFillColor));
         gc.setStroke(strokeColor);

@@ -11,7 +11,8 @@ public class DrawableRectangle extends DrawFigure {
 
     private final Rectangle rectangle;
 
-    public DrawableRectangle(Point topLeft, Point bottomRight) {
+    public DrawableRectangle(Point topLeft, Point bottomRight, FigureInfo info) {
+        super(info);
         this.rectangle = new Rectangle(topLeft, bottomRight);
     }
 
@@ -23,6 +24,8 @@ public class DrawableRectangle extends DrawFigure {
 
         double width = Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX());
         double height = Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY());
+
+        setShadowRect(gc, rectangle.getTopLeft(), rectangle.getBottomRight());
 
         gc.setFill(getGradientColor(firstFillColor, secondFillColor));
         gc.setStroke(strokeColor);

@@ -5,6 +5,7 @@ import backend.model.Ellipse;
 import backend.model.Point;
 import frontend.model.DrawFigure;
 import frontend.model.DrawableEllipse;
+import frontend.model.FigureInfo;
 import javafx.scene.canvas.GraphicsContext;
 
 public class EllipseButton extends FigureButton {
@@ -13,17 +14,17 @@ public class EllipseButton extends FigureButton {
         super(name);
     }
 
-   /* @Override
+    @Override
     public Figure create(Point startPoint, Point endPoint) {
         double sMayorAxis = Math.abs(endPoint.getX() - startPoint.getX());
         double sMinorAxis = Math.abs(endPoint.getY() - startPoint.getY());
         return new Ellipse(startPoint, sMayorAxis, sMinorAxis);
-    }*/
+    }
 
     @Override
-    public DrawFigure createDrawFigure(Point startPoint, Point endPoint) {
+    public DrawFigure createDrawFigure(Point startPoint, Point endPoint, FigureInfo info) {
         double sMajorAxis = Math.abs(endPoint.getX() - startPoint.getX());
         double sMinorAxis = Math.abs(endPoint.getY() - startPoint.getY());
-        return new DrawableEllipse(startPoint, sMinorAxis, sMajorAxis);
+        return new DrawableEllipse(startPoint, sMinorAxis, sMajorAxis, info);
     }
 }

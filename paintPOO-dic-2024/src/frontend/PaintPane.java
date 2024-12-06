@@ -11,9 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -51,6 +49,9 @@ public class PaintPane extends BorderPane {
 	// Seleccionar una figura
 	Figure selectedFigure; // la figura seleccionada
 
+	//Sombra
+	private final ChoiceBox<ShadowType> shadowsChoiceBox = new ChoiceBox<>();
+
 	// StatusBar
 	StatusPane statusPane; //barra azul abajo del canvas, indica las coordenadas del cursor en el canvas
 
@@ -76,11 +77,16 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
+		shadowsChoiceBox.getItems().addAll(ShadowType.values());
+		Label shadowText = new Label("Sombras");
+		shadowsChoiceBox.setValue(ShadowType.NONE);
+
 		// agrega todos los botones juntos en una misma columna (la columna en este caso es la de la izq, gris)
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
 		buttonsBox.getChildren().add(fillColorPicker);
 		buttonsBox.getChildren().add(secondFillColorPicker);
+		buttonsBox.getChildren().add(shadowsChoiceBox);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -102,13 +108,13 @@ public class PaintPane extends BorderPane {
 
 			for(FigureButton button : figureButtons) {
 				if(button.isSelected() ) {
-					newFigure = button.createDrawFigure(startPoint, endPoint).getFigure();
+					newFigure = button.create(startPoint, endPoint);
 					newButton = button;
 
 					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), startPoint, endPoint, defaultShadowType));
 					figureColorMap.put(newFigure, fillColorPicker.getValue());
 					canvasState.addFigure(newFigure);
-					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint));
+					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint, figureInfoMap.get(newFigure)));
 					startPoint = null;
 					redrawCanvas();
 				}
@@ -189,6 +195,14 @@ public class PaintPane extends BorderPane {
 				// Actualiza el segundo color en figureInfoMap
 				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 				figureInfo.setSecondaryColor(secondFillColorPicker.getValue());
+				redrawCanvas();
+			}
+		});
+
+		shadowsChoiceBox.setOnAction(event -> {
+			if(selectedFigure != null && selectionButton.isSelected()){
+				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+				figureInfo.setShadowType(shadowsChoiceBox.getValue());
 				redrawCanvas();
 			}
 		});

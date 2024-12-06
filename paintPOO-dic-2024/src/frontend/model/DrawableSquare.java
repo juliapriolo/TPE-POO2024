@@ -13,7 +13,8 @@ public class DrawableSquare extends DrawFigure{
 
     private final Square square;
 
-    public DrawableSquare(Point startPoint, Point endPoint){
+    public DrawableSquare(Point startPoint, Point endPoint, FigureInfo info){
+        super(info);
         double size = calculateSize(startPoint, endPoint);
         this.square = new Square(startPoint, size);
     }
@@ -31,6 +32,8 @@ public class DrawableSquare extends DrawFigure{
         double y = Math.min(square.getTopLeft().getY(), square.getBottomRight().getY());
 
         double side = Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX());
+
+        setShadowRect(gc, square.getTopLeft(), square.getBottomRight());
 
         gc.setFill(getGradientColor(firstFillColor, secondFillColor));
         gc.setStroke(strokeColor);
