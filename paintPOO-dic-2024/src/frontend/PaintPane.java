@@ -154,7 +154,7 @@ public class PaintPane extends BorderPane {
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
 				for (Figure figure : canvasState.figures()) {
 					if(figureBelongs(figure, eventPoint)) {
-						if(initializedCopyFormatButton) {
+						if(initializedCopyFormatButton && selectedFigure != null) {
 
 							FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
 							FigureInfo destinyFigureInfo = figureInfoMap.get(figure);

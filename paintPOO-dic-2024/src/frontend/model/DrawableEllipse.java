@@ -26,18 +26,19 @@ public class DrawableEllipse extends DrawFigure {
 
         setShadowOval(gc, ellipse.getCenterPoint(), ellipse.getsMinorAxis(), ellipse.getsMayorAxis());
 
-        if(info.getArcType()){
-            setEllipseArcType(gc);
-        }
+
 
         // Configuración de colores de relleno y borde
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
-        gc.setLineWidth(1);
         // Dibuja la elipse (relleno y borde)
         gc.fillOval(x, y, width, height);
         gc.strokeOval(x, y, width, height);
+        if(info.getArcType()){
+            setEllipseArcType(gc);
+        }
+        gc.setLineWidth(1);
     }
 
     private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor){
