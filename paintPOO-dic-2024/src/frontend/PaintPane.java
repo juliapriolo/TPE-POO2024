@@ -30,6 +30,8 @@ public class PaintPane extends BorderPane {
 	Color lineColor = Color.BLACK; // por deafult, la lineas tiene que ser negras
 	Color defaultFillColor = Color.YELLOW; // por default el color de las formas es amarillo
 	ShadowType defaultShadowType = ShadowType.NONE;
+	boolean defaultArcType = false;
+	boolean initializedCopyFormatButton = false;
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
@@ -38,6 +40,7 @@ public class PaintPane extends BorderPane {
 	FigureButton squareButton = new SquareButton("Cuadrado");
 	FigureButton ellipseButton = new EllipseButton("Elipse");
 	ToggleButton deleteButton = new ToggleButton("Borrar");
+	ToggleButton copyFormatButton = new ToggleButton("Copiar Fmt.");
 
 	// Selector de color de relleno
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
@@ -51,6 +54,9 @@ public class PaintPane extends BorderPane {
 
 	//Sombra
 	private final ChoiceBox<ShadowType> shadowsChoiceBox = new ChoiceBox<>();
+
+	//Biselado
+	private final CheckBox biselado = new CheckBox("Biselado");
 
 	// StatusBar
 	StatusPane statusPane; //barra azul abajo del canvas, indica las coordenadas del cursor en el canvas
@@ -78,7 +84,7 @@ public class PaintPane extends BorderPane {
 		}
 
 		shadowsChoiceBox.getItems().addAll(ShadowType.values());
-		Label shadowText = new Label("Sombras");
+		Label shadowText = new Label("Formato");
 		shadowsChoiceBox.setValue(ShadowType.NONE);
 
 		// agrega todos los botones juntos en una misma columna (la columna en este caso es la de la izq, gris)
@@ -86,7 +92,10 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().addAll(toolsArr);
 		buttonsBox.getChildren().add(fillColorPicker);
 		buttonsBox.getChildren().add(secondFillColorPicker);
+		buttonsBox.getChildren().add(shadowText);
 		buttonsBox.getChildren().add(shadowsChoiceBox);
+		buttonsBox.getChildren().add(biselado);
+		buttonsBox.getChildren().add(copyFormatButton);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -111,7 +120,7 @@ public class PaintPane extends BorderPane {
 					newFigure = button.create(startPoint, endPoint);
 					newButton = button;
 
-					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), startPoint, endPoint, defaultShadowType));
+					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), startPoint, endPoint, defaultShadowType, defaultArcType));
 					figureColorMap.put(newFigure, fillColorPicker.getValue());
 					canvasState.addFigure(newFigure);
 					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint, figureInfoMap.get(newFigure)));
@@ -139,12 +148,24 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMouseClicked(event -> {
+			Point eventPoint = new Point(event.getX(), event.getY());
+			boolean found = false;
 			if(selectionButton.isSelected()) {
-				Point eventPoint = new Point(event.getX(), event.getY());
-				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
 				for (Figure figure : canvasState.figures()) {
 					if(figureBelongs(figure, eventPoint)) {
+						if(initializedCopyFormatButton) {
+
+							FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
+							FigureInfo destinyFigureInfo = figureInfoMap.get(figure);
+
+							destinyFigureInfo.setColor(originFigureInfo.getColor());
+							destinyFigureInfo.setSecondaryColor(originFigureInfo.getSecondaryColor());
+							destinyFigureInfo.setShadowType(originFigureInfo.getShadowType());
+							destinyFigureInfo.transferArcType(originFigureInfo.getArcType());
+							initializedCopyFormatButton = false;
+
+						}
 						found = true;
 						selectedFigure = figure;
 						label.append(figure.toString());
@@ -206,13 +227,38 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
+		biselado.setOnAction(event -> {
+			if(selectedFigure != null && selectionButton.isSelected()){
+				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+				if (biselado.isSelected()) {
+					if (!figureInfo.getArcType()) {
+						figureInfo.setArcType(); // Activar el biselado
+						redrawCanvas();
+					}
+				} else {
+					// Opcional: lógica para desactivar el efecto
+					if (figureInfo.getArcType()) {
+						figureInfo.setArcType(); // Desactivar el biselado
+						redrawCanvas();
+					}
+				}
+			}
+		});
+
+		copyFormatButton.setOnAction(event -> {
+			if(selectedFigure != null && selectionButton.isSelected()){
+				initializedCopyFormatButton = true;
+			}
+			redrawCanvas();
+		});
 	}
 
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
 			Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
-			drawFigures.get(figure).draw(gc, figureInfoMap.get(figure).getColor(), figureInfoMap.get(figure).getSecondaryColor(), strokeColor);
+			drawFigures.get(figure).draw(gc, figureInfoMap.get(figure), strokeColor);
 		}
 	}
 

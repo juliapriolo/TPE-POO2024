@@ -17,7 +17,7 @@ public class DrawableRectangle extends DrawFigure {
     }
 
     @Override
-    public void draw(GraphicsContext gc, Color firstFillColor, Color secondFillColor, Color strokeColor) {
+    public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor) {
 
         double x = Math.min(rectangle.getTopLeft().getX(), rectangle.getBottomRight().getX());
         double y = Math.min(rectangle.getTopLeft().getY(), rectangle.getBottomRight().getY());
@@ -27,11 +27,16 @@ public class DrawableRectangle extends DrawFigure {
 
         setShadowRect(gc, rectangle.getTopLeft(), rectangle.getBottomRight());
 
-        gc.setFill(getGradientColor(firstFillColor, secondFillColor));
+        gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
-        
+
         gc.fillRect(x, y, width, height);
         gc.strokeRect(x, y, width, height);
+
+        if(info.getArcType()){
+            setRectangleArcType(gc);
+        }
+        gc.setLineWidth(1);
     }
 
     private LinearGradient getGradientColor(Color firstFillColor, Color secondFillColor){
@@ -39,6 +44,22 @@ public class DrawableRectangle extends DrawFigure {
                 CycleMethod.NO_CYCLE,
                 new Stop(0, firstFillColor),
                 new Stop(1, secondFillColor));
+    }
+
+    private void setRectangleArcType(GraphicsContext gc){
+        double x = rectangle.getTopLeft().getX();
+        double y = rectangle.getTopLeft().getY();
+
+        double width = Math.abs(x - rectangle.getBottomRight().getX());
+        double height = Math.abs(y - rectangle.getBottomRight().getY());
+
+        gc.setLineWidth(10);
+        gc.setStroke(Color.LIGHTGRAY);
+        gc.strokeLine(x, y, x + width, y);
+        gc.strokeLine(x, y, x, y + height);
+        gc.setStroke(Color.BLACK);
+        gc.strokeLine(x + width, y, x + width, y + height);
+        gc.strokeLine(x, y + height, x + width, y + height);
     }
 
     @Override

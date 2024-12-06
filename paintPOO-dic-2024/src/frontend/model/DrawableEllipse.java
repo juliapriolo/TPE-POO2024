@@ -5,6 +5,7 @@ import backend.model.Ellipse;
 import backend.model.Point;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
+import javafx.scene.shape.ArcType;
 
 public class DrawableEllipse extends DrawFigure {
 
@@ -16,7 +17,7 @@ public class DrawableEllipse extends DrawFigure {
     }
 
     @Override
-    public void draw(GraphicsContext gc, Color firstFillColor, Color secondFirstColor, Color strokeColor) {
+    public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor) {
         // Cálculo de los valores de posición y dimensiones de la elipse
         double x = ellipse.getCenterPoint().getX() - ellipse.getsMayorAxis() / 2;
         double y = ellipse.getCenterPoint().getY() - ellipse.getsMinorAxis() / 2;
@@ -25,10 +26,15 @@ public class DrawableEllipse extends DrawFigure {
 
         setShadowOval(gc, ellipse.getCenterPoint(), ellipse.getsMinorAxis(), ellipse.getsMayorAxis());
 
+        if(info.getArcType()){
+            setEllipseArcType(gc);
+        }
+
         // Configuración de colores de relleno y borde
-        gc.setFill(getGradientColor(firstFillColor, secondFirstColor));
+        gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
+        gc.setLineWidth(1);
         // Dibuja la elipse (relleno y borde)
         gc.fillOval(x, y, width, height);
         gc.strokeOval(x, y, width, height);
@@ -39,6 +45,19 @@ public class DrawableEllipse extends DrawFigure {
                 CycleMethod.NO_CYCLE,
                 new Stop(0, firstFillColor),
                 new Stop(1, secondFillColor));
+    }
+
+    private void setEllipseArcType(GraphicsContext gc){
+        double ellipseX = ellipse.getCenterPoint().getX() - ellipse.getsMayorAxis() / 2;
+        double ellipseY = ellipse.getCenterPoint().getY() - ellipse.getsMinorAxis() / 2;
+        double width = ellipse.getsMayorAxis();
+        double height = ellipse.getsMinorAxis();
+
+        gc.setLineWidth(10);
+        gc.setStroke(Color.LIGHTGRAY);
+        gc.strokeArc(ellipseX, ellipseY, width, height, 45, 180, ArcType.OPEN);
+        gc.setStroke(Color.BLACK);
+        gc.strokeArc(ellipseX, ellipseY, width, height, 225, 180, ArcType.OPEN);
     }
 
     @Override

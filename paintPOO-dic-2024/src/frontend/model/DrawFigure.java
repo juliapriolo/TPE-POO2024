@@ -13,7 +13,7 @@ public abstract class DrawFigure {
         this.info = info;
     }
 
-    public abstract void draw(GraphicsContext gc, Color firstFillColor, Color secondFillColor, Color colorStroke);
+    public abstract void draw(GraphicsContext gc, FigureInfo info, Color colorStroke);
 
     public abstract Figure getFigure();
 

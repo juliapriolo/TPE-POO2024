@@ -12,13 +12,27 @@ public class FigureInfo {
     private double axis1;
     private double axis2;
     private ShadowType shadowType;
+    private boolean arcType;
 
-    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType) {
+    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType, boolean arcType) {
         this.color = color;
         this.secondaryColor = secondaryColor;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.shadowType = shadowType;
+        this.arcType = arcType;
+    }
+
+    public boolean getArcType(){
+        return arcType;
+    }
+
+    public void transferArcType(boolean arcType){
+        this.arcType = arcType;
+    }
+
+    public void setArcType(){
+        arcType = !arcType;
     }
 
     public ShadowType getShadowType() {

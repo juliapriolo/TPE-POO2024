@@ -27,7 +27,7 @@ public class DrawableSquare extends DrawFigure{
     }
 
     @Override
-    public void draw(GraphicsContext gc, Color firstFillColor, Color secondFillColor, Color strokeColor){
+    public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor){
         double x = Math.min(square.getTopLeft().getX(), square.getBottomRight().getX());
         double y = Math.min(square.getTopLeft().getY(), square.getBottomRight().getY());
 
@@ -35,11 +35,16 @@ public class DrawableSquare extends DrawFigure{
 
         setShadowRect(gc, square.getTopLeft(), square.getBottomRight());
 
-        gc.setFill(getGradientColor(firstFillColor, secondFillColor));
+        gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
         gc.fillRect(x, y, side, side);
         gc.strokeRect(x, y, side, side);
+
+        if(info.getArcType()) {
+            setSquareArcType(gc);
+        }
+        gc.setLineWidth(1);
     }
 
     private LinearGradient getGradientColor(Color firstFillColor, Color secondFillColor){
@@ -47,6 +52,21 @@ public class DrawableSquare extends DrawFigure{
                 CycleMethod.NO_CYCLE,
                 new Stop(0, firstFillColor),
                 new Stop(1, secondFillColor));
+    }
+
+    private void setSquareArcType(GraphicsContext gc){
+        double x = square.getTopLeft().getX();
+        double y = square.getTopLeft().getY();
+
+        double side = Math.abs(x - square.getBottomRight().getX());
+
+        gc.setLineWidth(10);
+        gc.setStroke(Color.LIGHTGRAY);
+        gc.strokeLine(x, y, x + side, y);
+        gc.strokeLine(x, y, x, y + side);
+        gc.setStroke(Color.BLACK);
+        gc.strokeLine(x + side, y, x + side, y + side);
+        gc.strokeLine(x, y + side, x + side, y + side);
     }
 
     @Override
