@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 public class Ellipse implements Figure {
 
     private final Point centerPoint;
-    private final double sMayorAxis, sMinorAxis;
+    private double sMayorAxis, sMinorAxis;
 
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
         this.centerPoint = centerPoint;
@@ -32,7 +32,13 @@ public class Ellipse implements Figure {
         return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", centerPoint, sMayorAxis, sMinorAxis);
     }
 
+    public void setsMayorAxis(double sMayorAxis) {
+        this.sMayorAxis = sMayorAxis;
+    }
 
+    public void setsMinorAxis(double sMinorAxis) {
+        this.sMinorAxis = sMinorAxis;
+    }
 
     @Override
     public void move(double deltaX, double deltaY){

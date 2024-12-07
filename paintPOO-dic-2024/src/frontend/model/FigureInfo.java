@@ -35,6 +35,18 @@ public class FigureInfo {
         arcType = !arcType;
     }
 
+    public boolean getRotate(){
+        return rotateRight;
+    }
+
+    public void setRotate(boolean rotateRight) {
+        this.rotateRight = rotateRight;
+    }
+
+    public void setRotate() {
+        this.rotateRight = true; // Activa la rotación
+    }
+
     public ShadowType getShadowType() {
         return shadowType;
     }

@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 
 public class Rectangle implements Figure {
 
-    private final Point topLeft, bottomRight;
+    private Point topLeft, bottomRight;
 
     public Rectangle(Point topLeft, Point bottomRight) {
         this.topLeft = topLeft;
@@ -19,6 +19,14 @@ public class Rectangle implements Figure {
 
     public Point getBottomRight() {
         return bottomRight;
+    }
+
+    public void setTopLeft(Point topLeft){
+        this.topLeft = topLeft;
+    }
+
+    public void setBottomRight(Point bottomRight){
+        this.bottomRight = bottomRight;
     }
 
     @Override

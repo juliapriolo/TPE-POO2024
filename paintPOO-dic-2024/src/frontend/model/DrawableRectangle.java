@@ -37,6 +37,12 @@ public class DrawableRectangle extends DrawFigure {
             setRectangleArcType(gc);
         }
         gc.setLineWidth(1);
+
+        if(info.getRotate()){
+            info.setRotate(false);
+            rotateRight();
+        }
+
     }
 
     private LinearGradient getGradientColor(Color firstFillColor, Color secondFillColor){
@@ -61,6 +67,31 @@ public class DrawableRectangle extends DrawFigure {
         gc.strokeLine(x + width, y, x + width, y + height);
         gc.strokeLine(x, y + height, x + width, y + height);
     }
+
+    public void rotateRight() {
+        double topLeftX = rectangle.getTopLeft().getX();
+        double topLeftY = rectangle.getTopLeft().getY();
+        double bottomRightX = rectangle.getBottomRight().getX();
+        double bottomRightY = rectangle.getBottomRight().getY();
+
+        double centerX = (topLeftX + bottomRightX) / 2;
+        double centerY = (topLeftY + bottomRightY) / 2;
+
+        double deltaX = topLeftX - centerX;
+        double deltaY = topLeftY - centerY;
+        double newTopLeftX = centerX - deltaY;
+        double newTopLeftY = centerY + deltaX;
+
+        deltaX = bottomRightX - centerX;
+        deltaY = bottomRightY - centerY;
+        double newBottomRightX = centerX - deltaY;
+        double newBottomRightY = centerY + deltaX;
+
+        // Establecer los nuevos puntos para el rectángulo
+        rectangle.setTopLeft(new Point(newTopLeftX, newTopLeftY));
+        rectangle.setBottomRight(new Point(newBottomRightX, newBottomRightY));
+    }
+
 
     @Override
     public Figure getFigure() {

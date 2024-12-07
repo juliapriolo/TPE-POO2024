@@ -32,6 +32,7 @@ public class PaintPane extends BorderPane {
 	ShadowType defaultShadowType = ShadowType.NONE;
 	boolean defaultArcType = false;
 	boolean initializedCopyFormatButton = false;
+	boolean defaultRotate = false;
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
@@ -41,6 +42,9 @@ public class PaintPane extends BorderPane {
 	FigureButton ellipseButton = new EllipseButton("Elipse");
 	ToggleButton deleteButton = new ToggleButton("Borrar");
 	ToggleButton copyFormatButton = new ToggleButton("Copiar Fmt.");
+
+	//Botones Barra Derecha
+	ToggleButton turnRightButton = new ToggleButton("Girar D");
 
 	// Selector de color de relleno
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
@@ -83,9 +87,19 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
+		ToggleButton[] toolsRight = {turnRightButton};
+		ToggleGroup rightTools = new ToggleGroup();
+		for(ToggleButton tool : toolsRight){
+			tool.setMinWidth(90);
+			tool.setToggleGroup(rightTools);
+			tool.setCursor(Cursor.HAND);
+		}
+
 		shadowsChoiceBox.getItems().addAll(ShadowType.values());
 		Label shadowText = new Label("Formato");
 		shadowsChoiceBox.setValue(ShadowType.NONE);
+
+		Label actionsText = new Label("Acciones");
 
 		// agrega todos los botones juntos en una misma columna (la columna en este caso es la de la izq, gris)
 		VBox buttonsBox = new VBox(10);
@@ -100,6 +114,17 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
 		gc.setLineWidth(1);
+
+		//agrega los otros botones juntos en una misma columna(del lado derecho, gris)
+		VBox rightButtons = new VBox(10);
+		setRight(rightButtons);
+		rightButtons.getChildren().add(actionsText);
+		rightButtons.getChildren().addAll(toolsRight);
+		rightButtons.setPadding(new Insets(5));
+		rightButtons.setStyle("-fx-background-color: #999");
+		rightButtons.setPrefWidth(100);
+		gc.setLineWidth(1);
+
 
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
@@ -120,7 +145,7 @@ public class PaintPane extends BorderPane {
 					newFigure = button.create(startPoint, endPoint);
 					newButton = button;
 
-					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), startPoint, endPoint, defaultShadowType, defaultArcType));
+					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), startPoint, endPoint, defaultShadowType, defaultArcType, defaultRotate));
 					figureColorMap.put(newFigure, fillColorPicker.getValue());
 					canvasState.addFigure(newFigure);
 					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint, figureInfoMap.get(newFigure)));
@@ -200,7 +225,8 @@ public class PaintPane extends BorderPane {
 			}
 		});
 		setLeft(buttonsBox);
-		setRight(canvas);
+		setRight(rightButtons);
+		setCenter(canvas);
 
 		fillColorPicker.setOnAction(event -> {
 			if (selectedFigure != null && selectionButton.isSelected()) {
@@ -252,6 +278,14 @@ public class PaintPane extends BorderPane {
 			}
 			redrawCanvas();
 		});
+
+		turnRightButton.setOnAction((event ->{
+			if(selectedFigure != null && selectionButton.isSelected()){
+				FigureInfo info = figureInfoMap.get(selectedFigure);
+				info.setRotate();
+				redrawCanvas();
+			}
+		}));
 	}
 
 	void redrawCanvas() {
