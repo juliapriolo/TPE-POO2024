@@ -24,7 +24,7 @@ public class DrawableCircle extends DrawFigure{
         double y = circle.getCenterPoint().getY() - circle.getRadius();
         double radius = circle.getRadius();
 
-        setShadowOval(gc, circle.getCenterPoint(),radius, radius);
+        setShadowOval(gc, circle.getCenterPoint(),radius*2, radius*2);
 
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
@@ -47,14 +47,14 @@ public class DrawableCircle extends DrawFigure{
     }
 
     private void setCircleArcType(GraphicsContext gc){
-        double arcX = circle.getCenterPoint().getX() - circle.getRadius() / 2;
-        double arcY = circle.getCenterPoint().getY() - circle.getRadius() / 2;
+        double arcX = circle.getCenterPoint().getX() - circle.getRadius();
+        double arcY = circle.getCenterPoint().getY() - circle.getRadius();
 
         gc.setLineWidth(10);
         gc.setStroke(Color.LIGHTGRAY);
-        gc.strokeArc(arcX, arcY, circle.getRadius(), circle.getRadius(), 45, 180, ArcType.OPEN);
+        gc.strokeArc(arcX, arcY, circle.getRadius()*2, circle.getRadius()*2, 45, 180, ArcType.OPEN);
         gc.setStroke(Color.BLACK);
-        gc.strokeArc(arcX, arcY, circle.getRadius(), circle.getRadius(), 225, 180, ArcType.OPEN);
+        gc.strokeArc(arcX, arcY, circle.getRadius()*2, circle.getRadius()*2, 225, 180, ArcType.OPEN);
     }
 
     public void voltearH(FigureInfo info){
