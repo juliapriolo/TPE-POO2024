@@ -39,11 +39,6 @@ public class DrawableEllipse extends DrawFigure {
             setEllipseArcType(gc);
         }
         gc.setLineWidth(1);
-
-        if(info.getRotate()){
-            info.setRotate(false);
-            rotateRight();
-        }
     }
 
     private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor){
@@ -66,10 +61,14 @@ public class DrawableEllipse extends DrawFigure {
         gc.strokeArc(ellipseX, ellipseY, width, height, 225, 180, ArcType.OPEN);
     }
 
-    public void rotateRight(){
-        double aux = ellipse.getsMayorAxis();
-        ellipse.setsMayorAxis(ellipse.getsMinorAxis());
-        ellipse.setsMinorAxis(aux);
+    @Override
+    public void rotateRight(FigureInfo info){
+        if (info.getRotate()) {
+            double tempAxis = ellipse.getsMayorAxis();
+            ellipse.setsMayorAxis(ellipse.getsMinorAxis());
+            ellipse.setsMinorAxis(tempAxis);
+            info.setRotate(false);
+        }
     }
 
     @Override

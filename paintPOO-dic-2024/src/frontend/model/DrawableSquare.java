@@ -70,6 +70,25 @@ public class DrawableSquare extends DrawFigure{
     }
 
     @Override
+    public void rotateRight(FigureInfo info) {
+        if (info.getRotate()) {
+            double centerX = (square.getTopLeft().getX() + square.getBottomRight().getX()) / 2;
+            double centerY = (square.getTopLeft().getY() + square.getBottomRight().getY()) / 2;
+
+            double side = Math.abs(square.getBottomRight().getX() - square.getTopLeft().getX());
+
+            Point newTopLeft = new Point(centerX - side / 2, centerY - side / 2);
+            Point newBottomRight = new Point(centerX + side / 2, centerY + side / 2);
+
+            square.setTopLeft(newTopLeft);
+            square.setBottomRight(newBottomRight);
+
+            // Resetea el flag después de rotar.
+            info.setRotate(false);
+        }
+    }
+
+    @Override
     public Figure getFigure(){
         return square;
     }

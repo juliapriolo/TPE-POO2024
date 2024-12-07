@@ -57,6 +57,13 @@ public class DrawableCircle extends DrawFigure{
     }
 
     @Override
+    public void rotateRight(FigureInfo info){
+        if (info.getRotate()) {
+            info.setRotate(false);
+        }
+    }
+
+    @Override
     public Figure getFigure(){
         return circle;
     }

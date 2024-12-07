@@ -37,12 +37,6 @@ public class DrawableRectangle extends DrawFigure {
             setRectangleArcType(gc);
         }
         gc.setLineWidth(1);
-
-        if(info.getRotate()){
-            info.setRotate(false);
-            rotateRight();
-        }
-
     }
 
     private LinearGradient getGradientColor(Color firstFillColor, Color secondFillColor){
@@ -68,28 +62,28 @@ public class DrawableRectangle extends DrawFigure {
         gc.strokeLine(x, y + height, x + width, y + height);
     }
 
-    public void rotateRight() {
-        double topLeftX = rectangle.getTopLeft().getX();
-        double topLeftY = rectangle.getTopLeft().getY();
-        double bottomRightX = rectangle.getBottomRight().getX();
-        double bottomRightY = rectangle.getBottomRight().getY();
+    @Override
+    public void rotateRight(FigureInfo info) {
+        if (info.getRotate()) {
+            // Realiza la lógica específica de rotación de esta figura.
+            double centerX = (rectangle.getTopLeft().getX() + rectangle.getBottomRight().getX()) / 2;
+            double centerY = (rectangle.getTopLeft().getY() + rectangle.getBottomRight().getY()) / 2;
 
-        double centerX = (topLeftX + bottomRightX) / 2;
-        double centerY = (topLeftY + bottomRightY) / 2;
+            double width = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX());
+            double height = Math.abs(rectangle.getBottomRight().getY() - rectangle.getTopLeft().getY());
 
-        double deltaX = topLeftX - centerX;
-        double deltaY = topLeftY - centerY;
-        double newTopLeftX = centerX - deltaY;
-        double newTopLeftY = centerY + deltaX;
+            double halfNewWidth = height / 2;
+            double halfNewHeight = width / 2;
 
-        deltaX = bottomRightX - centerX;
-        deltaY = bottomRightY - centerY;
-        double newBottomRightX = centerX - deltaY;
-        double newBottomRightY = centerY + deltaX;
+            Point newTopLeft = new Point(centerX - halfNewWidth, centerY - halfNewHeight);
+            Point newBottomRight = new Point(centerX + halfNewWidth, centerY + halfNewHeight);
 
-        // Establecer los nuevos puntos para el rectángulo
-        rectangle.setTopLeft(new Point(newTopLeftX, newTopLeftY));
-        rectangle.setBottomRight(new Point(newBottomRightX, newBottomRightY));
+            rectangle.setTopLeft(newTopLeft);
+            rectangle.setBottomRight(newBottomRight);
+
+            // Una vez rotada, resetea el flag para evitar rotaciones repetidas.
+            info.setRotate(false);
+        }
     }
 
 

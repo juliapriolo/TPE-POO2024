@@ -279,10 +279,15 @@ public class PaintPane extends BorderPane {
 			redrawCanvas();
 		});
 
-		turnRightButton.setOnAction((event ->{
-			if(selectedFigure != null && selectionButton.isSelected()){
+		turnRightButton.setOnAction((event -> {
+			if (selectedFigure != null && selectionButton.isSelected()) {
 				FigureInfo info = figureInfoMap.get(selectedFigure);
 				info.setRotate();
+
+				DrawFigure drawable = drawFigures.get(selectedFigure);
+				if (drawable != null) {
+					drawable.rotateRight(info);
+				}
 				redrawCanvas();
 			}
 		}));
