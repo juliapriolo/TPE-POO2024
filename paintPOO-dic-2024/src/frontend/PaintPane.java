@@ -35,6 +35,7 @@ public class PaintPane extends BorderPane {
 	boolean defaultRotate = false;
 	boolean defaultVoltearH = false;
 	boolean defaultVoltearV = false;
+	private final double offset = 10;
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
@@ -49,6 +50,7 @@ public class PaintPane extends BorderPane {
 	ToggleButton turnRightButton = new ToggleButton("Girar D");
 	ToggleButton voltearHorizontal = new ToggleButton("Voltear H");
 	ToggleButton voltearVertical = new ToggleButton("Voltear V");
+	ToggleButton duplicate = new ToggleButton("Duplicar");
 
 	// Selector de color de relleno
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
@@ -75,6 +77,9 @@ public class PaintPane extends BorderPane {
 	//Informacion para cada figura
 	Map<Figure, FigureInfo> figureInfoMap = new HashMap<>();
 
+	//Botones por figura
+	Map<Figure, FigureButton> figureToButtonMap = new HashMap<>();
+
 	FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
 
 	Map<Figure, DrawFigure> drawFigures = new HashMap<>();
@@ -91,7 +96,7 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
-		ToggleButton[] toolsRight = {turnRightButton, voltearHorizontal, voltearVertical};
+		ToggleButton[] toolsRight = {turnRightButton, voltearHorizontal, voltearVertical, duplicate};
 		ToggleGroup rightTools = new ToggleGroup();
 		for(ToggleButton tool : toolsRight){
 			tool.setMinWidth(90);
@@ -148,6 +153,7 @@ public class PaintPane extends BorderPane {
 				if(button.isSelected() ) {
 					newFigure = button.create(startPoint, endPoint);
 					newButton = button;
+					figureToButtonMap.putIfAbsent(newFigure, newButton);
 
 					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(),
 							startPoint, endPoint, defaultShadowType, defaultArcType,
@@ -322,6 +328,31 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
+		duplicate.setOnAction((event -> {
+			if(selectedFigure != null && selectionButton.isSelected()){
+				Figure figure = selectedFigure;
+				FigureInfo originalInfo = figureInfoMap.get(figure);
+
+				Point newStartPoint = new Point(originalInfo.getStartPoint().getX() + offset, originalInfo.getStartPoint().getY() + offset);
+				Point newEndPoint = new Point(originalInfo.getEndPoint().getX() + offset, originalInfo.getEndPoint().getY() + offset);
+
+				Figure duplicateFigure = figureToButtonMap.get(figure).create(newStartPoint, newEndPoint);
+
+				//duplico la info y pongo las nuevas coordenadas
+				FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
+						newStartPoint, newEndPoint, originalInfo.getShadowType(), originalInfo.getArcType(),
+						originalInfo.getRotate(), originalInfo.getVoltearH(), originalInfo.getVoltearV());
+
+				//creo la draw figure
+				DrawFigure duplicateDrawFig = figureToButtonMap.get(figure).createDrawFigure(newStartPoint, newEndPoint, duplicatedInfo);
+				figureInfoMap.put(duplicateFigure, duplicatedInfo);
+				drawFigures.put(duplicateFigure, duplicateDrawFig);
+				selectedFigure = null;
+				canvasState.addFigure(duplicateFigure);
+				redrawCanvas();
+
+			}}));
 	}
 
 	void redrawCanvas() {
