@@ -81,6 +81,9 @@ public class DrawableRectangle extends DrawFigure {
             rectangle.setTopLeft(newTopLeft);
             rectangle.setBottomRight(newBottomRight);
 
+            info.setStartPoint(newTopLeft);
+            info.setEndPoint(newBottomRight);
+
             // Una vez rotada, resetea el flag para evitar rotaciones repetidas.
             info.setRotate(false);
         }
