@@ -37,12 +37,6 @@ public class DrawableRectangle extends DrawFigure {
             setRectangleArcType(gc);
         }
         gc.setLineWidth(1);
-/*
-        if(info.getRotate()){
-            info.setRotate(false);
-            rotateRight(info);
-        }
-*/
     }
 
     private LinearGradient getGradientColor(Color firstFillColor, Color secondFillColor){
@@ -68,6 +62,7 @@ public class DrawableRectangle extends DrawFigure {
         gc.strokeLine(x, y + height, x + width, y + height);
     }
 
+    @Override
     public void rotateRight(FigureInfo info) {
         if (info.getRotate()) {
             // Realiza la lógica específica de rotación de esta figura.
@@ -83,9 +78,6 @@ public class DrawableRectangle extends DrawFigure {
             Point newTopLeft = new Point(centerX - halfNewWidth, centerY - halfNewHeight);
             Point newBottomRight = new Point(centerX + halfNewWidth, centerY + halfNewHeight);
 
-            rectangle.getTopLeft().move(newTopLeft.getX() - rectangle.getTopLeft().getX(), newTopLeft.getY() - rectangle.getTopLeft().getY());
-            rectangle.getBottomRight().move(newBottomRight.getX() - rectangle.getBottomRight().getX(), newBottomRight.getY() - rectangle.getBottomRight().getY());
-
             rectangle.setTopLeft(newTopLeft);
             rectangle.setBottomRight(newBottomRight);
 
@@ -95,36 +87,6 @@ public class DrawableRectangle extends DrawFigure {
             // Una vez rotada, resetea el flag para evitar rotaciones repetidas.
             info.setRotate(false);
         }
-    }
-
-    public void voltearV(FigureInfo info){
-        double height = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX()) / 2;
-
-        Point newTopLeft = new Point(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY() + height);
-        Point newBottomRight = new Point(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY() + height);
-
-        rectangle.setTopLeft(newTopLeft);
-        rectangle.setBottomRight(newBottomRight);
-
-        info.setStartPoint(newTopLeft);
-        info.setEndPoint(newBottomRight);
-
-        info.setVoltearV(false);
-    }
-
-    public void voltearH(FigureInfo info){
-        double width = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX());
-
-        Point newTopLeft = new Point(rectangle.getTopLeft().getX() + width, rectangle.getTopLeft().getY());
-        Point newBottomRight = new Point(rectangle.getBottomRight().getX() + width, rectangle.getBottomRight().getY());
-
-        info.setStartPoint(newTopLeft);
-        info.setEndPoint(newBottomRight);
-
-        rectangle.setTopLeft(newTopLeft);
-        rectangle.setBottomRight(newBottomRight);
-
-        info.setVoltearH(false);
     }
 
 

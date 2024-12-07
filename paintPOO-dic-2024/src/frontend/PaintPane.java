@@ -33,8 +33,6 @@ public class PaintPane extends BorderPane {
 	boolean defaultArcType = false;
 	boolean initializedCopyFormatButton = false;
 	boolean defaultRotate = false;
-	boolean defaultVoltearH = false;
-	boolean defaultVoltearV = false;
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
@@ -47,8 +45,6 @@ public class PaintPane extends BorderPane {
 
 	//Botones Barra Derecha
 	ToggleButton turnRightButton = new ToggleButton("Girar D");
-	ToggleButton voltearHorizontal = new ToggleButton("Voltear H");
-	ToggleButton voltearVertical = new ToggleButton("Voltear V");
 
 	// Selector de color de relleno
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
@@ -91,7 +87,7 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
-		ToggleButton[] toolsRight = {turnRightButton, voltearHorizontal, voltearVertical};
+		ToggleButton[] toolsRight = {turnRightButton};
 		ToggleGroup rightTools = new ToggleGroup();
 		for(ToggleButton tool : toolsRight){
 			tool.setMinWidth(90);
@@ -149,9 +145,7 @@ public class PaintPane extends BorderPane {
 					newFigure = button.create(startPoint, endPoint);
 					newButton = button;
 
-					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(),
-							startPoint, endPoint, defaultShadowType, defaultArcType,
-							defaultRotate, defaultVoltearH, defaultVoltearV));
+					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), startPoint, endPoint, defaultShadowType, defaultArcType, defaultRotate));
 					figureColorMap.put(newFigure, fillColorPicker.getValue());
 					canvasState.addFigure(newFigure);
 					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint, figureInfoMap.get(newFigure)));
@@ -285,51 +279,18 @@ public class PaintPane extends BorderPane {
 			redrawCanvas();
 		});
 
-		turnRightButton.setOnAction(event -> {
+		turnRightButton.setOnAction((event -> {
 			if (selectedFigure != null && selectionButton.isSelected()) {
-				// Obtén el estado de la figura seleccionada.
 				FigureInfo info = figureInfoMap.get(selectedFigure);
-
-				// Marca el estado para rotar.
 				info.setRotate();
 
-				// Llama a la lógica de rotación en la clase DrawableFigure.
 				DrawFigure drawable = drawFigures.get(selectedFigure);
 				if (drawable != null) {
 					drawable.rotateRight(info);
 				}
-
-				// Redibuja el canvas.
 				redrawCanvas();
 			}
-		});
-
-		voltearHorizontal.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				FigureInfo info = figureInfoMap.get(selectedFigure);
-				info.setVoltearH();
-
-				DrawFigure df = drawFigures.get(selectedFigure);
-				if(df != null){
-					df.voltearH(info);
-				}
-				redrawCanvas();
-			}
-		});
-
-		voltearVertical.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				FigureInfo info = figureInfoMap.get(selectedFigure);
-				info.setVoltearV();
-
-				DrawFigure df = drawFigures.get(selectedFigure);
-				if(df != null){
-					df.voltearV(info);
-				}
-				redrawCanvas();
-			}
-		});
-
+		}));
 	}
 
 	void redrawCanvas() {

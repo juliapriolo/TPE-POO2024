@@ -19,10 +19,6 @@ public abstract class DrawFigure {
 
     public abstract void rotateRight(FigureInfo info);
 
-    public abstract void voltearH(FigureInfo info);
-
-    public abstract void voltearV(FigureInfo info);
-
     public void setShadowOval(GraphicsContext gc, Point centerPoint, double sMinorAxis, double sMayorAxis){
         if(!info.getShadowType().equals(ShadowType.NONE)){
             gc.setFill(info.getShadowType().getColor(info.getColor()));

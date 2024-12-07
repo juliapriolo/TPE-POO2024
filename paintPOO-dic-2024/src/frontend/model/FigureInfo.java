@@ -14,23 +14,26 @@ public class FigureInfo {
     private ShadowType shadowType;
     private boolean arcType;
     private boolean rotateRight;
-    private boolean voltearH;
-    private boolean voltearV;
 
-    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType, boolean arcType, boolean rotateRight, boolean voltearH, boolean voltearV) {
+    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType, boolean arcType, boolean rotateRight) {
         this.color = color;
         this.secondaryColor = secondaryColor;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.shadowType = shadowType;
         this.arcType = arcType;
-        this.rotateRight = rotateRight;
-        this.voltearH = voltearH;
-        this.voltearV = voltearV;
     }
 
     public boolean getArcType(){
         return arcType;
+    }
+
+    public void transferArcType(boolean arcType){
+        this.arcType = arcType;
+    }
+
+    public void setArcType(){
+        arcType = !arcType;
     }
 
     public boolean getRotate(){
@@ -43,38 +46,6 @@ public class FigureInfo {
 
     public void setRotate() {
         this.rotateRight = true; // Activa la rotación
-    }
-
-    public boolean getVoltearH(){
-        return voltearH;
-    }
-
-    public void setVoltearH(){
-        this.voltearH = true;
-    }
-
-    public void setVoltearH(boolean voltearH){
-        this.voltearH = voltearH;
-    }
-
-    public boolean getVoltearV(){
-        return voltearV;
-    }
-
-    public void setVoltearV(){
-        voltearV = true;
-    }
-
-    public void setVoltearV(boolean voltearV){
-        this.voltearV = voltearV;
-    }
-
-    public void transferArcType(boolean arcType){
-        this.arcType = arcType;
-    }
-
-    public void setArcType(){
-        arcType = !arcType;
     }
 
     public ShadowType getShadowType() {
