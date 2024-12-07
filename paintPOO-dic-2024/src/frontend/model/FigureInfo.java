@@ -13,8 +13,9 @@ public class FigureInfo {
     private double axis2;
     private ShadowType shadowType;
     private boolean arcType;
+    private boolean rotateRight;
 
-    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType, boolean arcType) {
+    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType, boolean arcType, boolean rotateRight) {
         this.color = color;
         this.secondaryColor = secondaryColor;
         this.startPoint = startPoint;
