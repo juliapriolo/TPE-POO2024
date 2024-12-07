@@ -15,4 +15,12 @@ public class Circle extends Ellipse {
     public double getRadius() {
         return getsMinorAxis()/2;
     }
+
+    @Override
+    public boolean contains(Point eventPoint) {
+        double distance = Math.pow(eventPoint.getX() - getCenterPoint().getX(), 2) +
+                Math.pow(eventPoint.getY() - getCenterPoint().getY(), 2);
+
+        return distance <= Math.pow(getRadius(), 2);
+    }
 }

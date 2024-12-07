@@ -20,23 +20,24 @@ public class DrawableCircle extends DrawFigure{
 
     @Override
     public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor){
-        double x = circle.getCenterPoint().getX() - circle.getRadius() / 2;
-        double y = circle.getCenterPoint().getY() - circle.getRadius() / 2;
+        double x = circle.getCenterPoint().getX() - circle.getRadius();
+        double y = circle.getCenterPoint().getY() - circle.getRadius();
         double radius = circle.getRadius();
 
-        setShadowOval(gc, circle.getCenterPoint(), circle.getRadius(), circle.getRadius());
+        setShadowOval(gc, circle.getCenterPoint(),radius, radius);
 
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
-        gc.fillOval(x, y, radius, radius);
-        gc.strokeOval(x, y, radius, radius);
+        gc.fillOval(x, y, radius*2, radius*2);
+        gc.strokeOval(x, y, radius*2, radius*2);
 
         if(info.getArcType()){
             setCircleArcType(gc);
         }
         gc.setLineWidth(1);
     }
+
 
     private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor){
         return  new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,

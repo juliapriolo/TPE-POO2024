@@ -45,11 +45,16 @@ public class Ellipse implements Figure {
         centerPoint.move(deltaX, deltaY);
     }
 
+    //Verifica directamente en el rectangulo que la contiene
     @Override
     public boolean contains(Point eventPoint) {
-        double normalizedX = Math.pow(eventPoint.getX() - centerPoint.getX(), 2) / Math.pow(sMayorAxis, 2);
-        double normalizedY = Math.pow(eventPoint.getY() - centerPoint.getY(), 2) / Math.pow(sMinorAxis, 2);
-        return (normalizedX + normalizedY) <= 1.0;
+        double x = centerPoint.getX() - sMayorAxis / 2;
+        double y = centerPoint.getY() - sMinorAxis / 2;
+        double width = sMayorAxis;
+        double height = sMinorAxis;
+
+        return eventPoint.getX() >= x && eventPoint.getX() <= x + width &&
+                eventPoint.getY() >= y && eventPoint.getY() <= y + height;
     }
 
 }
