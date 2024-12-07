@@ -20,17 +20,17 @@ public class DrawableCircle extends DrawFigure{
 
     @Override
     public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor){
-        double x = circle.getCenterPoint().getX() - circle.getRadius();
-        double y = circle.getCenterPoint().getY() - circle.getRadius();
+        double x = circle.getCenterPoint().getX() - circle.getRadius() / 2;
+        double y = circle.getCenterPoint().getY() - circle.getRadius() / 2;
         double radius = circle.getRadius();
 
-        setShadowOval(gc, circle.getCenterPoint(),radius, radius);
+        setShadowOval(gc, circle.getCenterPoint(), circle.getRadius(), circle.getRadius());
 
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
-        gc.fillOval(x, y, radius*2, radius*2);
-        gc.strokeOval(x, y, radius*2, radius*2);
+        gc.fillOval(x, y, radius, radius);
+        gc.strokeOval(x, y, radius, radius);
 
         if(info.getArcType()){
             setCircleArcType(gc);
@@ -38,6 +38,19 @@ public class DrawableCircle extends DrawFigure{
         gc.setLineWidth(1);
     }
 
+    public void voltearH(FigureInfo info){
+        double width = circle.getRadius();
+        circle.setCenterPoint(new Point(circle.getCenterPoint().getX() + width, circle.getCenterPoint().getY()));
+
+        info.setVoltearH(false);
+    }
+
+    public void voltearV(FigureInfo info){
+        double height = circle.getRadius();
+        circle.setCenterPoint(new Point(circle.getCenterPoint().getX(), circle.getCenterPoint().getY() + height));
+
+        info.setVoltearV(false);
+    }
 
     private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor){
         return  new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
@@ -57,9 +70,12 @@ public class DrawableCircle extends DrawFigure{
         gc.strokeArc(arcX, arcY, circle.getRadius(), circle.getRadius(), 225, 180, ArcType.OPEN);
     }
 
-    @Override
     public void rotateRight(FigureInfo info){
         if (info.getRotate()) {
+            // No hay cambios geométricos porque un círculo es simétrico.
+            // Opcional: Puedes realizar alguna acción especial si es necesario.
+
+            // Resetea el flag después de rotar.
             info.setRotate(false);
         }
     }

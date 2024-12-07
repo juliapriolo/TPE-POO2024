@@ -69,7 +69,6 @@ public class DrawableSquare extends DrawFigure{
         gc.strokeLine(x, y + side, x + side, y + side);
     }
 
-    @Override
     public void rotateRight(FigureInfo info) {
         if (info.getRotate()) {
             double centerX = (square.getTopLeft().getX() + square.getBottomRight().getX()) / 2;
@@ -83,13 +82,48 @@ public class DrawableSquare extends DrawFigure{
             square.setTopLeft(newTopLeft);
             square.setBottomRight(newBottomRight);
 
+            info.setStartPoint(newTopLeft);
+            info.setEndPoint(newBottomRight);
+
             // Resetea el flag después de rotar.
             info.setRotate(false);
         }
     }
+
+    public void voltearV(FigureInfo info){
+        double height = Math.abs(square.getBottomRight().getX() - square.getTopLeft().getX()) / 2;
+
+        Point newTopLeft = new Point(square.getTopLeft().getX(), square.getTopLeft().getY() + height);
+        Point newBottomRight = new Point(square.getBottomRight().getX(), square.getBottomRight().getY() + height);
+
+        square.setTopLeft(newTopLeft);
+        square.setBottomRight(newBottomRight);
+
+        info.setStartPoint(newTopLeft);
+        info.setEndPoint(newBottomRight);
+
+        info.setVoltearV(false);
+    }
+
+    public void voltearH(FigureInfo info){
+        double width = Math.abs(square.getBottomRight().getX() - square.getTopLeft().getX());
+
+        Point newTopLeft = new Point(square.getTopLeft().getX() + width, square.getTopLeft().getY());
+        Point newBottomRight = new Point(square.getBottomRight().getX() + width, square.getBottomRight().getY());
+
+        info.setStartPoint(newTopLeft);
+        info.setEndPoint(newBottomRight);
+
+        square.setTopLeft(newTopLeft);
+        square.setBottomRight(newBottomRight);
+
+        info.setVoltearH(false);
+    }
+
 
     @Override
     public Figure getFigure(){
         return square;
     }
 }
+
