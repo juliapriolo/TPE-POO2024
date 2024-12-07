@@ -88,6 +88,36 @@ public class DrawableSquare extends DrawFigure{
         }
     }
 
+    public void voltearV(FigureInfo info){
+        double height = Math.abs(square.getBottomRight().getX() - square.getTopLeft().getX()) / 2;
+
+        Point newTopLeft = new Point(square.getTopLeft().getX(), square.getTopLeft().getY() + height);
+        Point newBottomRight = new Point(square.getBottomRight().getX(), square.getBottomRight().getY() + height);
+
+        square.setTopLeft(newTopLeft);
+        square.setBottomRight(newBottomRight);
+
+        info.setStartPoint(newTopLeft);
+        info.setEndPoint(newBottomRight);
+
+        info.setVoltearV(false);
+    }
+
+    public void voltearH(FigureInfo info){
+        double width = Math.abs(square.getBottomRight().getX() - square.getTopLeft().getX());
+
+        Point newTopLeft = new Point(square.getTopLeft().getX() + width, square.getTopLeft().getY());
+        Point newBottomRight = new Point(square.getBottomRight().getX() + width, square.getBottomRight().getY());
+
+        info.setStartPoint(newTopLeft);
+        info.setEndPoint(newBottomRight);
+
+        square.setTopLeft(newTopLeft);
+        square.setBottomRight(newBottomRight);
+
+        info.setVoltearH(false);
+    }
+
     @Override
     public Figure getFigure(){
         return square;

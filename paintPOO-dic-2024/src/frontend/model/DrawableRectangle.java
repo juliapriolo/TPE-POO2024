@@ -89,6 +89,36 @@ public class DrawableRectangle extends DrawFigure {
         }
     }
 
+    public void voltearV(FigureInfo info){
+        double height = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX()) / 2;
+
+        Point newTopLeft = new Point(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY() + height);
+        Point newBottomRight = new Point(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY() + height);
+
+        rectangle.setTopLeft(newTopLeft);
+        rectangle.setBottomRight(newBottomRight);
+
+        info.setStartPoint(newTopLeft);
+        info.setEndPoint(newBottomRight);
+
+        info.setVoltearV(false);
+    }
+
+    public void voltearH(FigureInfo info){
+        double width = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX());
+
+        Point newTopLeft = new Point(rectangle.getTopLeft().getX() + width, rectangle.getTopLeft().getY());
+        Point newBottomRight = new Point(rectangle.getBottomRight().getX() + width, rectangle.getBottomRight().getY());
+
+        info.setStartPoint(newTopLeft);
+        info.setEndPoint(newBottomRight);
+
+        rectangle.setTopLeft(newTopLeft);
+        rectangle.setBottomRight(newBottomRight);
+
+        info.setVoltearH(false);
+    }
+
 
     @Override
     public Figure getFigure() {

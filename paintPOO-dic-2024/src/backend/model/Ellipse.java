@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 
 public class Ellipse implements Figure {
 
-    private final Point centerPoint;
+    private Point centerPoint;
     private double sMayorAxis, sMinorAxis;
 
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
@@ -17,6 +17,10 @@ public class Ellipse implements Figure {
 
     public Point getCenterPoint() {
         return centerPoint;
+    }
+
+    public void setCenterPoint(Point centerPoint){
+        this.centerPoint = centerPoint;
     }
 
     public double getsMayorAxis() {

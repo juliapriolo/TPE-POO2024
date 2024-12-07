@@ -71,6 +71,20 @@ public class DrawableEllipse extends DrawFigure {
         }
     }
 
+    public void voltearV(FigureInfo info){
+        double height = ellipse.getsMinorAxis();
+        ellipse.setCenterPoint(new Point(ellipse.getCenterPoint().getX(), ellipse.getCenterPoint().getY() + height));
+
+        info.setVoltearV(false);
+    }
+
+    public void voltearH(FigureInfo info){
+        double width = ellipse.getsMayorAxis();
+        ellipse.setCenterPoint(new Point(ellipse.getCenterPoint().getX() + width, ellipse.getCenterPoint().getY()));
+
+        info.setVoltearH(false);
+    }
+
     @Override
     public Figure getFigure() {
         return ellipse;

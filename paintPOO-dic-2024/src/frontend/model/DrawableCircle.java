@@ -57,6 +57,20 @@ public class DrawableCircle extends DrawFigure{
         gc.strokeArc(arcX, arcY, circle.getRadius(), circle.getRadius(), 225, 180, ArcType.OPEN);
     }
 
+    public void voltearH(FigureInfo info){
+        double width = circle.getRadius();
+        circle.setCenterPoint(new Point(circle.getCenterPoint().getX() + width, circle.getCenterPoint().getY()));
+
+        info.setVoltearH(false);
+    }
+
+    public void voltearV(FigureInfo info){
+        double height = circle.getRadius();
+        circle.setCenterPoint(new Point(circle.getCenterPoint().getX(), circle.getCenterPoint().getY() + height));
+
+        info.setVoltearV(false);
+    }
+
     @Override
     public void rotateRight(FigureInfo info){
         if (info.getRotate()) {
