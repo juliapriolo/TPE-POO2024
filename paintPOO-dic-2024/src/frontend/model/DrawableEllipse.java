@@ -102,10 +102,22 @@ public class DrawableEllipse extends DrawFigure {
         double x = ellipse.getCenterPoint().getX();
         double y = ellipse.getCenterPoint().getY();
 
+        double width = ellipse.getWidth();
+        double height = ellipse.getHeight();
+
+        if (isCircle(info)) { // Método para verificar si es un círculo
+            width /= 2;
+            height /= 2;
+        }
+
         Point newStartPoint = new Point(x, y);
-        Point newEndPoint = new Point(x + ellipse.getWidth(), y + ellipse.getHeight());
+        Point newEndPoint = new Point(x + width, y + height);
 
         info.setStartPoint(newStartPoint);
         info.setEndPoint(newEndPoint);
+    }
+
+    private boolean isCircle(FigureInfo info) {
+        return ellipse.getWidth() == ellipse.getHeight(); // O usa una bandera específica en `info`
     }
 }

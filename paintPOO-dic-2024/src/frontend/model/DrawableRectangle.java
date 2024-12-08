@@ -78,9 +78,28 @@ public class DrawableRectangle extends DrawFigure {
         }
     }
 
-    public void moveAndSync(double deltaX, double deltaY, FigureInfo info){
-        rectangle.move(deltaX, deltaY);
-        updateInfo(new Point(rectangle.getTopLeft().getX() + deltaX, rectangle.getTopLeft().getY() + deltaY), new Point(rectangle.getBottomRight().getX() + deltaX, rectangle.getBottomRight().getY() + deltaY), info);
+    public void moveAndSync(double deltaX, double deltaY, FigureInfo info) {
+        double centerX = (rectangle.getTopLeft().getX() + rectangle.getBottomRight().getX()) / 2;
+        double centerY = (rectangle.getTopLeft().getY() + rectangle.getBottomRight().getY()) / 2;
+
+        double newCenterX = centerX + deltaX;
+        double newCenterY = centerY + deltaY;
+
+        double width = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX());
+        double height = Math.abs(rectangle.getBottomRight().getY() - rectangle.getTopLeft().getY());
+
+        Point newTopLeft = new Point(newCenterX - width / 2, newCenterY - height / 2);
+        Point newBottomRight = new Point(newCenterX + width / 2, newCenterY + height / 2);
+
+        updateInfo(newTopLeft, newBottomRight, info);
+    }
+
+    public void updateInfo(Point newStartPoint, Point newEndPoint, FigureInfo info) {
+        rectangle.setTopLeft(newStartPoint);
+        rectangle.setBottomRight(newEndPoint);
+
+        info.setStartPoint(newStartPoint);
+        info.setEndPoint(newEndPoint);
     }
 
     public void customFlipRect(double deltaX, double deltaY, FigureInfo info, boolean isVertical){
@@ -108,11 +127,5 @@ public class DrawableRectangle extends DrawFigure {
         customFlipRect(width, 0, info, false);
     }
 
-    public void updateInfo(Point newStartPoint, Point newEndPoint, FigureInfo info){
-        rectangle.setTopLeft(newStartPoint);
-        rectangle.setBottomRight(newEndPoint);
 
-        info.setStartPoint(newStartPoint);
-        info.setEndPoint(newEndPoint);
-    }
 }
