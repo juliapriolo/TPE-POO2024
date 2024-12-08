@@ -345,9 +345,10 @@ public class PaintPane extends BorderPane {
 						originalInfo.getRotate(), originalInfo.getVoltearH(), originalInfo.getVoltearV());
 
 				//creo la draw figure
-				DrawFigure duplicateDrawFig = figureToButtonMap.get(figure).createDrawFigure(newStartPoint, newEndPoint, duplicatedInfo);
+				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(newStartPoint, newEndPoint, duplicatedInfo);
 				figureInfoMap.put(duplicateFigure, duplicatedInfo);
 				drawFigures.put(duplicateFigure, duplicateDrawFig);
+				figureToButtonMap.putIfAbsent(duplicateFigure, figureToButtonMap.get(figure));
 				selectedFigure = null;
 				canvasState.addFigure(duplicateFigure);
 				redrawCanvas();
