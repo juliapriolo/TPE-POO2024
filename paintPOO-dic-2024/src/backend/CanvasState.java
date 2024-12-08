@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasState {
+    private static final int INITIAL_LAYER = 1;
+    private static int currentLayer = INITIAL_LAYER;
+
 
     private final List<Figure> list = new ArrayList<>();
 
@@ -23,6 +26,10 @@ public class CanvasState {
 
     public Iterable<Figure> figures() {
         return new ArrayList<>(list);
+    }
+
+    public int getCurrentLayer(){
+        return currentLayer;
     }
 
 }

@@ -1,5 +1,6 @@
 package frontend;
 
+import backend.Layer;
 import backend.interfaces.Figure;
 import backend.CanvasState;
 import backend.model.*;
@@ -18,8 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PaintPane extends BorderPane {
 
@@ -57,6 +57,10 @@ public class PaintPane extends BorderPane {
 	//Botones Barra Horizontal Superior
 	private ToggleButton bringToFrontButton = new ToggleButton("Traer al Frente");
 	private ToggleButton sendToBackButton = new ToggleButton("Enviar al Fondo");
+	private ToggleButton addLayer = new ToggleButton("Agregar capa");
+	private ToggleButton deleteLayer = new ToggleButton("Eliminar capa");
+	private ToggleButton showLayer = new RadioButton("Mostrar");
+	private ToggleButton hideLayer = new RadioButton("Ocultar");
 
 	// Selector de color de relleno
 	private ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
@@ -70,6 +74,10 @@ public class PaintPane extends BorderPane {
 
 	//Sombra
 	private final ChoiceBox<ShadowType> shadowsChoiceBox = new ChoiceBox<>();
+
+	//Layers
+	private final ChoiceBox<Layer> layersChoiceBox = new ChoiceBox<>();
+	Label LayersText = new Label("Capas");
 
 	//Biselado
 	private final CheckBox biselado = new CheckBox("Biselado");
@@ -89,6 +97,11 @@ public class PaintPane extends BorderPane {
 	private FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
 
 	private Map<Figure, DrawFigure> drawFigures = new HashMap<>();
+
+	//Layer Map
+	private SortedMap<Layer, List<Figure>> layersMap = new TreeMap<>();
+
+	private Layer currentLayer;
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
@@ -142,9 +155,27 @@ public class PaintPane extends BorderPane {
 		gc.setLineWidth(1);
 
 		//agrega los botones de las capas a una fila arriba del canvas
+
+		//Inicializa el layersMap con 3 layers (con figuras vacias)
+		for(int i = canvasState.getCurrentLayer(); i <= 3; i++){
+			layersMap.putIfAbsent(new Layer(i), new ArrayList<>());
+		}
+
+		//Setea la capa en la primera
+		layersChoiceBox.setValue(layersMap.firstKey());
+		currentLayer = layersMap.firstKey();
+		showLayer.setSelected(true);
+
 		HBox layersButtons = new HBox(10);
 		layersButtons.getChildren().add(bringToFrontButton);
 		layersButtons.getChildren().add(sendToBackButton);
+		layersButtons.getChildren().add(LayersText);
+		layersButtons.getChildren().add(layersChoiceBox);
+		layersChoiceBox.getItems().addAll(layersMap.keySet());
+		layersButtons.getChildren().add(showLayer);
+		layersButtons.getChildren().add(hideLayer);
+		layersButtons.getChildren().add(addLayer);
+		layersButtons.getChildren().add(deleteLayer);
 		layersButtons.setPadding(new Insets(5));
 		layersButtons.setAlignment(Pos.CENTER);
 		layersButtons.setStyle("-fx-background-color: #999");
@@ -177,6 +208,7 @@ public class PaintPane extends BorderPane {
 							defaultRotate, defaultFlipH, defaultFlipV));
 					canvasState.addFigure(newFigure);
 					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure),newFigure,gc));
+					layersMap.get(currentLayer).add(newFigure);
 					startPoint = null;
 					redrawCanvas();
 				}
@@ -263,7 +295,7 @@ public class PaintPane extends BorderPane {
 
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
-				canvasState.deleteFigure(selectedFigure);
+				layersMap.get(currentLayer).remove(selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -298,6 +330,49 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
+		layersChoiceBox.setOnAction(event -> {
+			currentLayer = layersChoiceBox.getValue();
+			selectedFigure = null;
+			if(currentLayer.getVisibility()){
+				showLayer.fire();
+			} else{
+				hideLayer.fire();
+			}
+			redrawCanvas();
+		});
+
+		showLayer.setOnAction(event -> {
+			layersChoiceBox.getValue().unHide();
+			hideLayer.setSelected(false);
+			redrawCanvas();
+		});
+
+		hideLayer.setOnAction(event ->{
+			showLayer.setSelected(false);
+			layersChoiceBox.getValue().hide();
+			redrawCanvas();
+		});
+
+
+		deleteLayer.setOnAction(event -> {
+			if(currentLayer.canDelete()) {
+				layersMap.remove(currentLayer);
+				layersChoiceBox.getItems().remove(currentLayer);
+				layersChoiceBox.setValue(layersMap.firstKey());
+			}
+		});
+
+
+		addLayer.setOnAction(event -> {
+			int newLayerNumber = layersMap.size() + 1;
+			Layer newLayer = new Layer(newLayerNumber);
+			layersMap.put(newLayer, new ArrayList<>());
+			layersChoiceBox.getItems().add(newLayer);
+			currentLayer = newLayer;
+			layersChoiceBox.setValue(currentLayer);
+		});
+
 
 		biselado.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
@@ -386,6 +461,7 @@ public class PaintPane extends BorderPane {
 				figureToButtonMap.putIfAbsent(duplicateFigure, figureToButtonMap.get(figure));
 				selectedFigure = null;
 				canvasState.addFigure(duplicateFigure);
+				layersMap.get(currentLayer).add(duplicateFigure);
 				redrawCanvas();
 
 			}}));
@@ -408,11 +484,20 @@ public class PaintPane extends BorderPane {
 		});
 	}
 
-	void redrawCanvas() {
+	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for(Figure figure : canvasState.figures()) {
-			Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
-			drawFigures.get(figure).draw(gc, figureInfoMap.get(figure), strokeColor,figure);
+
+		for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
+			Layer layer = entry.getKey();
+			if (layer.getVisibility()){
+				for (Figure figure : entry.getValue()) {
+					Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
+					DrawFigure df = drawFigures.get(figure);
+					if (df != null) {
+						df.draw(gc, figureInfoMap.get(figure), strokeColor, figure);
+					}
+				}
+			}
 		}
 	}
 
