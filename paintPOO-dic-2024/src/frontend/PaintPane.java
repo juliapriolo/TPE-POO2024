@@ -164,7 +164,7 @@ public class PaintPane extends BorderPane {
 		//Setea la capa en la primera
 		layersChoiceBox.setValue(layersMap.firstKey());
 		currentLayer = layersMap.firstKey();
-		showLayer.setSelected(true);
+		showLayer.fire();
 
 		HBox layersButtons = new HBox(10);
 		layersButtons.getChildren().add(bringToFrontButton);
@@ -219,18 +219,31 @@ public class PaintPane extends BorderPane {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
-			for(Figure figure : canvasState.figures()) {
-				if(figureBelongs(figure, eventPoint)) {
-					found = true;
-					label.append(figure.toString());
+
+			// Recorremos las capas y verificamos si están visibles
+			for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
+				Layer layer = entry.getKey();
+
+				// Solo procesamos las capas visibles
+				if (layer.getVisibility()) {
+					// Recorremos las figuras dentro de la capa visible
+					for (Figure figure : entry.getValue()) {
+						if (figureBelongs(figure, eventPoint)) {
+							found = true;
+							label.append(figure.toString());
+						}
+					}
 				}
 			}
-			if(found) {
+
+			// Actualiza el estado dependiendo de si se encontró o no una figura
+			if (found) {
 				statusPane.updateStatus(label.toString());
 			} else {
 				statusPane.updateStatus(eventPoint.toString());
 			}
 		});
+
 
 		canvas.setOnMouseClicked(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
@@ -371,6 +384,8 @@ public class PaintPane extends BorderPane {
 			layersChoiceBox.getItems().add(newLayer);
 			currentLayer = newLayer;
 			layersChoiceBox.setValue(currentLayer);
+			showLayer.setSelected(true);
+			redrawCanvas();
 		});
 
 
@@ -468,17 +483,16 @@ public class PaintPane extends BorderPane {
 
 		bringToFrontButton.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
-				canvasState.deleteFigure(selectedFigure);
-				canvasState.addFigure(selectedFigure);
-
+				layersMap.get(currentLayer).remove(selectedFigure);
+				layersMap.get(currentLayer).add( selectedFigure);
 				redrawCanvas();
 			}
 		});
 
 		sendToBackButton.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
-				canvasState.deleteFigure(selectedFigure);
-				canvasState.addFigure(0, selectedFigure);
+				layersMap.get(currentLayer).remove(selectedFigure);
+				layersMap.get(currentLayer).add(0, selectedFigure);
 				redrawCanvas();
 			}
 		});
