@@ -8,11 +8,13 @@ import frontend.model.DrawFigure;
 import frontend.model.FigureInfo;
 import frontend.model.ShadowType;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -52,6 +54,10 @@ public class PaintPane extends BorderPane {
 	private ToggleButton flipVertically = new ToggleButton("Voltear V");
 	private ToggleButton duplicate = new ToggleButton("Duplicar");
 
+	//Botones Barra Horizontal Superior
+	private ToggleButton bringToFrontButton = new ToggleButton("Traer al Frente");
+	private ToggleButton sendToBackButton = new ToggleButton("Enviar al Fondo");
+
 	// Selector de color de relleno
 	private ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
 	private ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor); // inicializa el segundo color que se va a usar para hacer el difuminado
@@ -87,6 +93,7 @@ public class PaintPane extends BorderPane {
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
+
 		// configura el tamanio de cada boton en toolsArr y los lace que sean seleccion unica (ademas de la manito)
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
@@ -132,6 +139,16 @@ public class PaintPane extends BorderPane {
 		rightButtons.setPadding(new Insets(5));
 		rightButtons.setStyle("-fx-background-color: #999");
 		rightButtons.setPrefWidth(100);
+		gc.setLineWidth(1);
+
+		//agrega los botones de las capas a una fila arriba del canvas
+		HBox layersButtons = new HBox(10);
+		layersButtons.getChildren().add(bringToFrontButton);
+		layersButtons.getChildren().add(sendToBackButton);
+		layersButtons.setPadding(new Insets(5));
+		layersButtons.setAlignment(Pos.CENTER);
+		layersButtons.setStyle("-fx-background-color: #999");
+		layersButtons.setPrefWidth(100);
 		gc.setLineWidth(1);
 
 
@@ -254,6 +271,7 @@ public class PaintPane extends BorderPane {
 		setLeft(buttonsBox);
 		setRight(rightButtons);
 		setCenter(canvas);
+		setTop(layersButtons);
 
 		fillColorPicker.setOnAction(event -> {
 			if (selectedFigure != null && selectionButton.isSelected()) {
