@@ -22,9 +22,7 @@ public class EllipseButton extends FigureButton {
     }
 
     @Override
-    public DrawFigure createDrawFigure(Point startPoint, Point endPoint, FigureInfo info) {
-        double sMajorAxis = Math.abs(endPoint.getX() - startPoint.getX());
-        double sMinorAxis = Math.abs(endPoint.getY() - startPoint.getY());
-        return new DrawableEllipse(startPoint, sMinorAxis, sMajorAxis, info);
+    public DrawFigure createDrawFigure(FigureInfo info,Figure figure, GraphicsContext gc) {
+        return new DrawableEllipse(info, figure, gc);
     }
 }

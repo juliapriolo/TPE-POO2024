@@ -9,16 +9,15 @@ import javafx.scene.shape.ArcType;
 
 public class DrawableEllipse extends DrawFigure {
 
-    private final Ellipse ellipse;
+    private Ellipse ellipse;
 
-    public DrawableEllipse(Point centerPoint, double sMinorAxis, double sMajorAxis, FigureInfo info) {
-        super(info);
-        this.ellipse = new Ellipse(centerPoint, sMajorAxis, sMinorAxis);
+    public DrawableEllipse(FigureInfo info,Figure figure, GraphicsContext gc) {
+        super(info,figure,gc);
+        this.ellipse = (Ellipse) getFigure();
     }
 
     @Override
-    public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor) {
-        // Cálculo de los valores de posición y dimensiones de la elipse
+    public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor,Figure figure) {
         double x = ellipse.getCenterPoint().getX() - ellipse.getsMayorAxis() / 2;
         double y = ellipse.getCenterPoint().getY() - ellipse.getsMinorAxis() / 2;
         double width = ellipse.getsMayorAxis();
@@ -26,13 +25,11 @@ public class DrawableEllipse extends DrawFigure {
 
         setShadowOval(gc, ellipse.getCenterPoint(), ellipse.getsMinorAxis(), ellipse.getsMayorAxis());
 
-
-
         // Configuración de colores de relleno y borde
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
-        // Dibuja la elipse (relleno y borde)
+        // Dibuja la elipse
         gc.fillOval(x, y, width, height);
         gc.strokeOval(x, y, width, height);
         if(info.getArcType()){
@@ -49,10 +46,10 @@ public class DrawableEllipse extends DrawFigure {
     }
 
     private void setEllipseArcType(GraphicsContext gc){
-        double ellipseX = ellipse.getCenterPoint().getX() - ellipse.getsMayorAxis() / 2;
-        double ellipseY = ellipse.getCenterPoint().getY() - ellipse.getsMinorAxis() / 2;
-        double width = ellipse.getsMayorAxis();
-        double height = ellipse.getsMinorAxis();
+        double ellipseX = ellipse.getCenterPoint().getX() - ellipse.getWidth() / 2;
+        double ellipseY = ellipse.getCenterPoint().getY() - ellipse.getHeight() / 2;
+        double width = ellipse.getWidth();
+        double height = ellipse.getHeight();
 
         gc.setLineWidth(10);
         gc.setStroke(Color.LIGHTGRAY);
@@ -64,29 +61,32 @@ public class DrawableEllipse extends DrawFigure {
     @Override
     public void rotateRight(FigureInfo info){
         if (info.getRotate()) {
-            double tempAxis = ellipse.getsMayorAxis();
+            double tempAxis = getFigure().getWidth();
             ellipse.setsMayorAxis(ellipse.getsMinorAxis());
             ellipse.setsMinorAxis(tempAxis);
             info.setRotate(false);
         }
     }
 
-    public void voltearV(FigureInfo info){
+
+    private void customFlipEllipse(double deltaX, double deltaY, FigureInfo info, boolean isVertical) {
+        ellipse.setCenterPoint(new Point(ellipse.getCenterPoint().getX() + deltaX, ellipse.getCenterPoint().getY() + deltaY));
+
+        if (isVertical) {
+            info.setVoltearV(false);
+        } else {
+            info.setVoltearH(false);
+        }
+    }
+
+    public void voltearV(FigureInfo info) {
         double height = ellipse.getsMinorAxis();
-        ellipse.setCenterPoint(new Point(ellipse.getCenterPoint().getX(), ellipse.getCenterPoint().getY() + height));
-
-        info.setVoltearV(false);
+        customFlipEllipse(0, height, info, true);
     }
 
-    public void voltearH(FigureInfo info){
-        double width = ellipse.getsMayorAxis();
-        ellipse.setCenterPoint(new Point(ellipse.getCenterPoint().getX() + width, ellipse.getCenterPoint().getY()));
-
-        info.setVoltearH(false);
+    public void voltearH(FigureInfo info) {
+        double width = getFigure().getWidth();
+        customFlipEllipse(width, 0, info, false);
     }
 
-    @Override
-    public Figure getFigure() {
-        return ellipse;
-    }
 }

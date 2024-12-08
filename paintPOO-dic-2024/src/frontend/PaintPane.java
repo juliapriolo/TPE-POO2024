@@ -22,45 +22,45 @@ import java.util.Map;
 public class PaintPane extends BorderPane {
 
 	// BackEnd
-	CanvasState canvasState;
+	private CanvasState canvasState;
 
 	// Canvas y relacionados
-	Canvas canvas = new Canvas(800, 600); // el canva donde se va a dibujar
-	GraphicsContext gc = canvas.getGraphicsContext2D(); // permite dibujar las figuras, lineas, texto, imagen
-	Color lineColor = Color.BLACK; // por deafult, la lineas tiene que ser negras
-	Color defaultFillColor = Color.YELLOW; // por default el color de las formas es amarillo
-	ShadowType defaultShadowType = ShadowType.NONE;
-	boolean defaultArcType = false;
-	boolean initializedCopyFormatButton = false;
-	boolean defaultRotate = false;
-	boolean defaultVoltearH = false;
-	boolean defaultVoltearV = false;
+	private Canvas canvas = new Canvas(800, 600); // el canva donde se va a dibujar
+	private GraphicsContext gc = canvas.getGraphicsContext2D(); // permite dibujar las figuras, lineas, texto, imagen
+	private Color lineColor = Color.BLACK; // por deafult, la lineas tiene que ser negras
+	private Color defaultFillColor = Color.YELLOW; // por default el color de las formas es amarillo
+	private ShadowType defaultShadowType = ShadowType.NONE;
+	private boolean defaultArcType = false;
+	private boolean initializedCopyFormatButton = false;
+	private boolean defaultRotate = false;
+	private boolean defaultFlipH = false;
+	private boolean defaultFlipV = false;
 	private final double offset = 10;
 
 	// Botones Barra Izquierda
-	ToggleButton selectionButton = new ToggleButton("Seleccionar");
-	FigureButton rectangleButton = new RectangleButton("Rectángulo");
-	FigureButton circleButton = new CircleButton("Círculo");
-	FigureButton squareButton = new SquareButton("Cuadrado");
-	FigureButton ellipseButton = new EllipseButton("Elipse");
-	ToggleButton deleteButton = new ToggleButton("Borrar");
-	ToggleButton copyFormatButton = new ToggleButton("Copiar Fmt.");
+	private ToggleButton selectionButton = new ToggleButton("Seleccionar");
+	private FigureButton rectangleButton = new RectangleButton("Rectángulo");
+	private FigureButton circleButton = new CircleButton("Círculo");
+	private FigureButton squareButton = new SquareButton("Cuadrado");
+	private FigureButton ellipseButton = new EllipseButton("Elipse");
+	private ToggleButton deleteButton = new ToggleButton("Borrar");
+	private ToggleButton copyFormatButton = new ToggleButton("Copiar Fmt.");
 
 	//Botones Barra Derecha
-	ToggleButton turnRightButton = new ToggleButton("Girar D");
-	ToggleButton voltearHorizontal = new ToggleButton("Voltear H");
-	ToggleButton voltearVertical = new ToggleButton("Voltear V");
-	ToggleButton duplicate = new ToggleButton("Duplicar");
+	private ToggleButton turnRightButton = new ToggleButton("Girar D");
+	private ToggleButton flipHorizontally = new ToggleButton("Voltear H");
+	private ToggleButton flipVertically = new ToggleButton("Voltear V");
+	private ToggleButton duplicate = new ToggleButton("Duplicar");
 
 	// Selector de color de relleno
-	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
-	ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor); // inicializa el segundo color que se va a usar para hacer el difuminado
+	private ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
+	private ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor); // inicializa el segundo color que se va a usar para hacer el difuminado
 
 	// Dibujar una figura
-	Point startPoint; // de donde arrancar a dibujar
+	private Point startPoint; // de donde arrancar a dibujar
 
 	// Seleccionar una figura
-	Figure selectedFigure; // la figura seleccionada
+	private Figure selectedFigure; // la figura seleccionada
 
 	//Sombra
 	private final ChoiceBox<ShadowType> shadowsChoiceBox = new ChoiceBox<>();
@@ -69,20 +69,20 @@ public class PaintPane extends BorderPane {
 	private final CheckBox biselado = new CheckBox("Biselado");
 
 	// StatusBar
-	StatusPane statusPane; //barra azul abajo del canvas, indica las coordenadas del cursor en el canvas
+	private StatusPane statusPane; //barra azul abajo del canvas, indica las coordenadas del cursor en el canvas
 
 	// Colores de relleno de cada figura
-	Map<Figure, Color> figureColorMap = new HashMap<>(); //cada figura con su color de relleno
+	private Map<Figure, Color> figureColorMap = new HashMap<>(); //cada figura con su color de relleno
 
 	//Informacion para cada figura
-	Map<Figure, FigureInfo> figureInfoMap = new HashMap<>();
+	private Map<Figure, FigureInfo> figureInfoMap = new HashMap<>();
 
 	//Botones por figura
-	Map<Figure, FigureButton> figureToButtonMap = new HashMap<>();
+	private Map<Figure, FigureButton> figureToButtonMap = new HashMap<>();
 
-	FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
+	private FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
 
-	Map<Figure, DrawFigure> drawFigures = new HashMap<>();
+	private Map<Figure, DrawFigure> drawFigures = new HashMap<>();
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
@@ -96,7 +96,7 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
-		ToggleButton[] toolsRight = {turnRightButton, voltearHorizontal, voltearVertical, duplicate};
+		ToggleButton[] toolsRight = {turnRightButton, flipHorizontally, flipVertically, duplicate};
 		ToggleGroup rightTools = new ToggleGroup();
 		for(ToggleButton tool : toolsRight){
 			tool.setMinWidth(90);
@@ -157,9 +157,9 @@ public class PaintPane extends BorderPane {
 
 					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(),
 							startPoint, endPoint, defaultShadowType, defaultArcType,
-							defaultRotate, defaultVoltearH, defaultVoltearV));
+							defaultRotate, defaultFlipH, defaultFlipV));
 					canvasState.addFigure(newFigure);
-					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(startPoint, endPoint, figureInfoMap.get(newFigure)));
+					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure),newFigure,gc));
 					startPoint = null;
 					redrawCanvas();
 				}
@@ -298,12 +298,13 @@ public class PaintPane extends BorderPane {
 				DrawFigure drawable = drawFigures.get(selectedFigure);
 				if (drawable != null) {
 					drawable.rotateRight(info);
+					//canvasState.addFigure(drawable.getFigure());
 				}
 				redrawCanvas();
 			}
 		}));
 
-		voltearHorizontal.setOnAction(event -> {
+		flipHorizontally.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
 				FigureInfo info = figureInfoMap.get(selectedFigure);
 				info.setVoltearH();
@@ -316,7 +317,7 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		voltearVertical.setOnAction(event -> {
+		flipVertically.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
 				FigureInfo info = figureInfoMap.get(selectedFigure);
 				info.setVoltearV();
@@ -345,7 +346,7 @@ public class PaintPane extends BorderPane {
 						originalInfo.getRotate(), originalInfo.getVoltearH(), originalInfo.getVoltearV());
 
 				//creo la draw figure
-				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(newStartPoint, newEndPoint, duplicatedInfo);
+				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure,gc);
 				figureInfoMap.put(duplicateFigure, duplicatedInfo);
 				drawFigures.put(duplicateFigure, duplicateDrawFig);
 				figureToButtonMap.putIfAbsent(duplicateFigure, figureToButtonMap.get(figure));
@@ -360,9 +361,10 @@ public class PaintPane extends BorderPane {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
 			Color strokeColor = (figure == selectedFigure) ? Color.RED : lineColor;
-			drawFigures.get(figure).draw(gc, figureInfoMap.get(figure), strokeColor);
+			drawFigures.get(figure).draw(gc, figureInfoMap.get(figure), strokeColor,figure);
 		}
 	}
+
 
 	boolean figureBelongs(Figure figure, Point eventPoint) {
 		return figure.contains(eventPoint);

@@ -1,8 +1,7 @@
 package backend.model;
 
 import backend.interfaces.Figure;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+
 
 public class Ellipse implements Figure {
 
@@ -57,8 +56,16 @@ public class Ellipse implements Figure {
         double width = sMayorAxis;
         double height = sMinorAxis;
 
-        return eventPoint.getX() >= x && eventPoint.getX() <= x + width &&
-                eventPoint.getY() >= y && eventPoint.getY() <= y + height;
+        return eventPoint.getX() >= x && eventPoint.getX() <= x + width && eventPoint.getY() >= y && eventPoint.getY() <= y + height;
     }
 
+    @Override
+    public double getWidth() {
+        return sMayorAxis;
+    }
+
+    @Override
+    public double getHeight() {
+        return sMinorAxis;
+    }
 }

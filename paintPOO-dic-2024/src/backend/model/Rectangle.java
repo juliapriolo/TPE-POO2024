@@ -1,8 +1,6 @@
 package backend.model;
 
 import backend.interfaces.Figure;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class Rectangle implements Figure {
 
@@ -11,6 +9,16 @@ public class Rectangle implements Figure {
     public Rectangle(Point topLeft, Point bottomRight) {
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
+    }
+
+    @Override
+    public double getWidth() {
+        return Math.abs(getTopLeft().getX() - getBottomRight().getX());
+    }
+
+    @Override
+    public double getHeight() {
+        return Math.abs(getTopLeft().getY() - getBottomRight().getY());
     }
 
     public Point getTopLeft() {
@@ -40,7 +48,6 @@ public class Rectangle implements Figure {
         bottomRight.move(deltaX, deltaY);
 
     }
-
 
     @Override
     public boolean contains(Point eventPoint) {

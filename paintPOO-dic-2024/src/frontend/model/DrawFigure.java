@@ -9,19 +9,24 @@ public abstract class DrawFigure {
 
     private FigureInfo info;
 
-    public DrawFigure(FigureInfo info){
+    private Figure figure;
+
+    private final GraphicsContext gc;
+
+    public DrawFigure(FigureInfo info,Figure figure, GraphicsContext gc) {
+        this.figure = figure;
         this.info = info;
+        this.gc = gc;
     }
 
-    public abstract void draw(GraphicsContext gc, FigureInfo info, Color colorStroke);
-
-    public abstract Figure getFigure();
+    public abstract void draw(GraphicsContext gc, FigureInfo info, Color colorStroke, Figure figure);
 
     public abstract void rotateRight(FigureInfo info);
 
     public abstract void voltearH(FigureInfo info);
 
     public abstract void voltearV(FigureInfo info);
+
 
     public void setShadowOval(GraphicsContext gc, Point centerPoint, double sMinorAxis, double sMayorAxis){
         if(!info.getShadowType().equals(ShadowType.NONE)){
@@ -46,5 +51,9 @@ public abstract class DrawFigure {
 
             gc.fillRect(adjustedX, adjustedY, width, height);
         }
+    }
+
+    public Figure getFigure(){
+        return figure;
     }
 }
