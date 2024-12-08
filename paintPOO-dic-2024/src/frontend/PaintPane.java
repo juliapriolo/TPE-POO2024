@@ -219,14 +219,30 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseDragged(event -> {
 			if (selectionButton.isSelected() && selectedFigure != null) {
+				// Crear el nuevo punto basado en el evento del mouse
 				Point eventPoint = new Point(event.getX(), event.getY());
-				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
-				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
 
-				selectedFigure.move(diffX, diffY);
+				// Calcular las diferencias
+				double diffX = eventPoint.getX() - startPoint.getX();
+				double diffY = eventPoint.getY() - startPoint.getY();
+
+				// Obtener la DrawFigure y FigureInfo asociadas a la figura seleccionada
+				DrawFigure df = drawFigures.get(selectedFigure);
+				FigureInfo info = figureInfoMap.get(selectedFigure);
+
+				if (df != null && info != null) {
+					// Mover la figura y sincronizar los datos
+					df.moveAndSync(diffX, diffY, info);
+				}
+
+				// Actualizar el punto inicial para el próximo evento de arrastre
+				startPoint = eventPoint;
+
+				// Redibujar el canvas
 				redrawCanvas();
 			}
 		});
+
 
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
@@ -307,7 +323,7 @@ public class PaintPane extends BorderPane {
 		flipHorizontally.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
 				FigureInfo info = figureInfoMap.get(selectedFigure);
-				info.setVoltearH();
+				info.setFlipH();
 
 				DrawFigure df = drawFigures.get(selectedFigure);
 				if(df != null){
@@ -320,7 +336,7 @@ public class PaintPane extends BorderPane {
 		flipVertically.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
 				FigureInfo info = figureInfoMap.get(selectedFigure);
-				info.setVoltearV();
+				info.setFlipV();
 
 				DrawFigure df = drawFigures.get(selectedFigure);
 				if(df != null){
@@ -343,7 +359,7 @@ public class PaintPane extends BorderPane {
 				//duplico la info y pongo las nuevas coordenadas
 				FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
 						newStartPoint, newEndPoint, originalInfo.getShadowType(), originalInfo.getArcType(),
-						originalInfo.getRotate(), originalInfo.getVoltearH(), originalInfo.getVoltearV());
+						originalInfo.getRotate(), originalInfo.getFlipH(), originalInfo.getFlipV());
 
 				//creo la draw figure
 				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure,gc);

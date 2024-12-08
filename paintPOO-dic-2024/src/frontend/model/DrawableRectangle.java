@@ -22,8 +22,8 @@ public class DrawableRectangle extends DrawFigure {
         double x = Math.min(rectangle.getTopLeft().getX(), rectangle.getBottomRight().getX());
         double y = Math.min(rectangle.getTopLeft().getY(), rectangle.getBottomRight().getY());
 
-        double width = Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX());
-        double height = Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY());
+        double width = rectangle.getWidth();
+        double height = rectangle.getHeight();
 
         setShadowRect(gc, rectangle.getTopLeft(), rectangle.getBottomRight());
 
@@ -50,8 +50,8 @@ public class DrawableRectangle extends DrawFigure {
         double x = rectangle.getTopLeft().getX();
         double y = rectangle.getTopLeft().getY();
 
-        double width = Math.abs(x - rectangle.getBottomRight().getX());
-        double height = Math.abs(y - rectangle.getBottomRight().getY());
+        double width = rectangle.getWidth();
+        double height = rectangle.getHeight();
 
         gc.setLineWidth(10);
         gc.setStroke(Color.LIGHTGRAY);
@@ -65,43 +65,34 @@ public class DrawableRectangle extends DrawFigure {
     @Override
     public void rotateRight(FigureInfo info) {
         if (info.getRotate()) {
-            double centerX = (rectangle.getTopLeft().getX() + rectangle.getBottomRight().getX()) / 2;
-            double centerY = (rectangle.getTopLeft().getY() + rectangle.getBottomRight().getY()) / 2;
+            double halfNewWidth = rectangle.getHeight() / 2;
+            double halfNewHeight = rectangle.getWidth() / 2;
 
-            double width = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX());
-            double height = Math.abs(rectangle.getBottomRight().getY() - rectangle.getTopLeft().getY());
+            Point newTopLeft = new Point(rectangle.getCenter().getX() - halfNewWidth, rectangle.getCenter().getY() - halfNewHeight);
+            Point newBottomRight = new Point(rectangle.getCenter().getX() + halfNewWidth, rectangle.getCenter().getY() + halfNewHeight);
 
-            double halfNewWidth = height / 2;
-            double halfNewHeight = width / 2;
-
-            Point newTopLeft = new Point(centerX - halfNewWidth, centerY - halfNewHeight);
-            Point newBottomRight = new Point(centerX + halfNewWidth, centerY + halfNewHeight);
-
-            rectangle.setTopLeft(newTopLeft);
-            rectangle.setBottomRight(newBottomRight);
-
-            info.setStartPoint(newTopLeft);
-            info.setEndPoint(newBottomRight);
+            updateInfo(newTopLeft, newBottomRight, info);
 
             // Una vez rotada, resetea el flag para evitar rotaciones repetidas.
             info.setRotate(false);
         }
     }
 
+    public void moveAndSync(double deltaX, double deltaY, FigureInfo info){
+        rectangle.move(deltaX, deltaY);
+        updateInfo(new Point(rectangle.getTopLeft().getX() + deltaX, rectangle.getTopLeft().getY() + deltaY), new Point(rectangle.getBottomRight().getX() + deltaX, rectangle.getBottomRight().getY() + deltaY), info);
+    }
+
     public void customFlipRect(double deltaX, double deltaY, FigureInfo info, boolean isVertical){
         Point newTopLeft = new Point(rectangle.getTopLeft().getX() + deltaX, rectangle.getTopLeft().getY() + deltaY);
         Point newBottomRight = new Point(rectangle.getBottomRight().getX() + deltaX, rectangle.getBottomRight().getY() + deltaY);
 
-        rectangle.setTopLeft(newTopLeft);
-        rectangle.setBottomRight(newBottomRight);
-
-        info.setStartPoint(newTopLeft);
-        info.setEndPoint(newBottomRight);
+        updateInfo(newTopLeft, newBottomRight, info);
 
         if(isVertical){
-            info.setVoltearV(false);
+            info.setFlipV(false);
         }else{
-            info.setVoltearH(false);
+            info.setFlipH(false);
         }
     }
 
@@ -115,5 +106,13 @@ public class DrawableRectangle extends DrawFigure {
         double width = rectangle.getWidth();
 
         customFlipRect(width, 0, info, false);
+    }
+
+    public void updateInfo(Point newStartPoint, Point newEndPoint, FigureInfo info){
+        rectangle.setTopLeft(newStartPoint);
+        rectangle.setBottomRight(newEndPoint);
+
+        info.setStartPoint(newStartPoint);
+        info.setEndPoint(newEndPoint);
     }
 }

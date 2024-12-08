@@ -14,18 +14,19 @@ public class FigureInfo {
     private ShadowType shadowType;
     private boolean arcType;
     private boolean rotateRight;
-    private boolean voltearH;
-    private boolean voltearV;
+    private boolean flipH;
+    private boolean flipV;
 
-    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType, boolean arcType, boolean rotateRight, boolean voltearH, boolean voltearV) {
+    public FigureInfo(Color color, Color secondaryColor, Point startPoint, Point endPoint, ShadowType shadowType, boolean arcType, boolean rotateRight, boolean flipH, boolean flipV) {
         this.color = color;
         this.secondaryColor = secondaryColor;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.shadowType = shadowType;
         this.arcType = arcType;
-        this.voltearH = voltearH;
-        this.voltearV = voltearV;
+        this.rotateRight = rotateRight;
+        this.flipH = flipH;
+        this.flipV = flipV;
     }
 
     public boolean getArcType(){
@@ -52,28 +53,28 @@ public class FigureInfo {
         this.rotateRight = true; // Activa la rotación
     }
 
-    public boolean getVoltearH(){
-        return voltearH;
+    public boolean getFlipH(){
+        return flipH;
     }
 
-    public void setVoltearH(){
-        this.voltearH = true;
+    public void setFlipH(){
+        this.flipH = true;
     }
 
-    public void setVoltearH(boolean voltearH){
-        this.voltearH = voltearH;
+    public void setFlipH(boolean flipH){
+        this.flipH = flipH;
     }
 
-    public boolean getVoltearV(){
-        return voltearV;
+    public boolean getFlipV(){
+        return flipV;
     }
 
-    public void setVoltearV(){
-        voltearV = true;
+    public void setFlipV(){
+        flipV = true;
     }
 
-    public void setVoltearV(boolean voltearV){
-        this.voltearV = voltearV;
+    public void setFlipV(boolean flipV){
+        this.flipV = flipV;
     }
 
     public ShadowType getShadowType() {

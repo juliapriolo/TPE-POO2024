@@ -53,10 +53,8 @@ public class Ellipse implements Figure {
     public boolean contains(Point eventPoint) {
         double x = centerPoint.getX() - sMayorAxis / 2;
         double y = centerPoint.getY() - sMinorAxis / 2;
-        double width = sMayorAxis;
-        double height = sMinorAxis;
 
-        return eventPoint.getX() >= x && eventPoint.getX() <= x + width && eventPoint.getY() >= y && eventPoint.getY() <= y + height;
+        return eventPoint.getX() >= x && eventPoint.getX() <= x + getWidth() && eventPoint.getY() >= y && eventPoint.getY() <= y + getHeight();
     }
 
     @Override

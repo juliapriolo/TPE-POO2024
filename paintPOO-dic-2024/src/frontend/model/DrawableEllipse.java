@@ -11,13 +11,13 @@ public class DrawableEllipse extends DrawFigure {
 
     private Ellipse ellipse;
 
-    public DrawableEllipse(FigureInfo info,Figure figure, GraphicsContext gc) {
-        super(info,figure,gc);
+    public DrawableEllipse(FigureInfo info, Figure figure, GraphicsContext gc) {
+        super(info, figure, gc);
         this.ellipse = (Ellipse) getFigure();
     }
 
     @Override
-    public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor,Figure figure) {
+    public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor, Figure figure) {
         double x = ellipse.getCenterPoint().getX() - ellipse.getsMayorAxis() / 2;
         double y = ellipse.getCenterPoint().getY() - ellipse.getsMinorAxis() / 2;
         double width = ellipse.getsMayorAxis();
@@ -32,20 +32,25 @@ public class DrawableEllipse extends DrawFigure {
         // Dibuja la elipse
         gc.fillOval(x, y, width, height);
         gc.strokeOval(x, y, width, height);
-        if(info.getArcType()){
+        if (info.getArcType()) {
             setEllipseArcType(gc);
         }
         gc.setLineWidth(1);
     }
 
-    private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor){
-        return  new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
+    public void moveAndSync(double deltaX, double deltaY, FigureInfo info) {
+        ellipse.move(deltaX, deltaY);
+        updateInfo(info);
+    }
+
+    private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor) {
+        return new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
                 CycleMethod.NO_CYCLE,
                 new Stop(0, firstFillColor),
                 new Stop(1, secondFillColor));
     }
 
-    private void setEllipseArcType(GraphicsContext gc){
+    private void setEllipseArcType(GraphicsContext gc) {
         double ellipseX = ellipse.getCenterPoint().getX() - ellipse.getWidth() / 2;
         double ellipseY = ellipse.getCenterPoint().getY() - ellipse.getHeight() / 2;
         double width = ellipse.getWidth();
@@ -59,34 +64,48 @@ public class DrawableEllipse extends DrawFigure {
     }
 
     @Override
-    public void rotateRight(FigureInfo info){
+    public void rotateRight(FigureInfo info) {
         if (info.getRotate()) {
             double tempAxis = getFigure().getWidth();
             ellipse.setsMayorAxis(ellipse.getsMinorAxis());
             ellipse.setsMinorAxis(tempAxis);
+            updateInfo(info);
             info.setRotate(false);
         }
     }
 
 
     private void customFlipEllipse(double deltaX, double deltaY, FigureInfo info, boolean isVertical) {
-        ellipse.setCenterPoint(new Point(ellipse.getCenterPoint().getX() + deltaX, ellipse.getCenterPoint().getY() + deltaY));
+        Point newCenter = new Point(ellipse.getCenterPoint().getX() + deltaX, ellipse.getCenterPoint().getY() + deltaY);
+        ellipse.setCenterPoint(newCenter);
+
+        updateInfo(info);
 
         if (isVertical) {
-            info.setVoltearV(false);
+            info.setFlipV(false);
         } else {
-            info.setVoltearH(false);
+            info.setFlipH(false);
         }
     }
 
     public void flipVertically(FigureInfo info) {
-        double height = ellipse.getsMinorAxis();
+        double height = ellipse.getHeight();
         customFlipEllipse(0, height, info, true);
     }
 
     public void flipHorizontally(FigureInfo info) {
-        double width = getFigure().getWidth();
+        double width = ellipse.getWidth();
         customFlipEllipse(width, 0, info, false);
     }
 
+    public void updateInfo(FigureInfo info) {
+        double x = ellipse.getCenterPoint().getX();
+        double y = ellipse.getCenterPoint().getY();
+
+        Point newStartPoint = new Point(x, y);
+        Point newEndPoint = new Point(x + ellipse.getWidth(), y + ellipse.getHeight());
+
+        info.setStartPoint(newStartPoint);
+        info.setEndPoint(newEndPoint);
+    }
 }

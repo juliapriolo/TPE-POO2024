@@ -27,6 +27,8 @@ public abstract class DrawFigure {
 
     public abstract void flipVertically(FigureInfo info);
 
+    public abstract void moveAndSync(double deltaX, double deltaY, FigureInfo info);
+
 
     public void setShadowOval(GraphicsContext gc, Point centerPoint, double sMinorAxis, double sMayorAxis){
         if(!info.getShadowType().equals(ShadowType.NONE)){
