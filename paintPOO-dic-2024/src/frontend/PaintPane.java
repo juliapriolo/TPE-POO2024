@@ -389,6 +389,23 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 
 			}}));
+
+		bringToFrontButton.setOnAction(event -> {
+			if(selectedFigure != null && selectionButton.isSelected()){
+				canvasState.deleteFigure(selectedFigure);
+				canvasState.addFigure(selectedFigure);
+
+				redrawCanvas();
+			}
+		});
+
+		sendToBackButton.setOnAction(event -> {
+			if(selectedFigure != null && selectionButton.isSelected()){
+				canvasState.deleteFigure(selectedFigure);
+				canvasState.addFigure(0, selectedFigure);
+				redrawCanvas();
+			}
+		});
 	}
 
 	void redrawCanvas() {

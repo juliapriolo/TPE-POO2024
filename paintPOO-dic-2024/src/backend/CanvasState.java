@@ -13,6 +13,10 @@ public class CanvasState {
         list.add(figure);
     }
 
+    public void addFigure(int position, Figure figure){
+        list.add(position, figure);
+    }
+
     public void deleteFigure(Figure figure) {
         list.remove(figure);
     }
