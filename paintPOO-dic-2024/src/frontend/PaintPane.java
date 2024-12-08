@@ -311,7 +311,7 @@ public class PaintPane extends BorderPane {
 
 				DrawFigure df = drawFigures.get(selectedFigure);
 				if(df != null){
-					df.voltearH(info);
+					df.flipHorizontally(info);
 				}
 				redrawCanvas();
 			}
@@ -324,7 +324,7 @@ public class PaintPane extends BorderPane {
 
 				DrawFigure df = drawFigures.get(selectedFigure);
 				if(df != null){
-					df.voltearV(info);
+					df.flipVertically(info);
 				}
 				redrawCanvas();
 			}

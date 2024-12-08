@@ -79,12 +79,12 @@ public class DrawableEllipse extends DrawFigure {
         }
     }
 
-    public void voltearV(FigureInfo info) {
+    public void flipVertically(FigureInfo info) {
         double height = ellipse.getsMinorAxis();
         customFlipEllipse(0, height, info, true);
     }
 
-    public void voltearH(FigureInfo info) {
+    public void flipHorizontally(FigureInfo info) {
         double width = getFigure().getWidth();
         customFlipEllipse(width, 0, info, false);
     }

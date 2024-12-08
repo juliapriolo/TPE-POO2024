@@ -29,6 +29,10 @@ public class Rectangle implements Figure {
         return bottomRight;
     }
 
+    public Point getCenter(){
+        return new Point((getTopLeft().getX() + getBottomRight().getX()) / 2, (getTopLeft().getY() + getBottomRight().getY()) / 2);
+    }
+
     public void setTopLeft(Point topLeft){
         this.topLeft = topLeft;
     }

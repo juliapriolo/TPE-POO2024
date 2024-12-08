@@ -88,11 +88,9 @@ public class DrawableRectangle extends DrawFigure {
         }
     }
 
-    public void voltearV(FigureInfo info) {
-        double height = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX()) / 2;
-
-        Point newTopLeft = new Point(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY() + height);
-        Point newBottomRight = new Point(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY() + height);
+    public void customFlipRect(double deltaX, double deltaY, FigureInfo info, boolean isVertical){
+        Point newTopLeft = new Point(rectangle.getTopLeft().getX() + deltaX, rectangle.getTopLeft().getY() + deltaY);
+        Point newBottomRight = new Point(rectangle.getBottomRight().getX() + deltaX, rectangle.getBottomRight().getY() + deltaY);
 
         rectangle.setTopLeft(newTopLeft);
         rectangle.setBottomRight(newBottomRight);
@@ -100,21 +98,22 @@ public class DrawableRectangle extends DrawFigure {
         info.setStartPoint(newTopLeft);
         info.setEndPoint(newBottomRight);
 
-        info.setVoltearV(false);
+        if(isVertical){
+            info.setVoltearV(false);
+        }else{
+            info.setVoltearH(false);
+        }
     }
 
-    public void voltearH(FigureInfo info) {
-        double width = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX());
+    public void flipVertically(FigureInfo info) {
+        double height = rectangle.getHeight();
 
-        Point newTopLeft = new Point(rectangle.getTopLeft().getX() + width, rectangle.getTopLeft().getY());
-        Point newBottomRight = new Point(rectangle.getBottomRight().getX() + width, rectangle.getBottomRight().getY());
+        customFlipRect(0, height, info, true);
+    }
 
-        info.setStartPoint(newTopLeft);
-        info.setEndPoint(newBottomRight);
+    public void flipHorizontally(FigureInfo info) {
+        double width = rectangle.getWidth();
 
-        rectangle.setTopLeft(newTopLeft);
-        rectangle.setBottomRight(newBottomRight);
-
-        info.setVoltearH(false);
+        customFlipRect(width, 0, info, false);
     }
 }
