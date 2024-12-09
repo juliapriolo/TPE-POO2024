@@ -9,7 +9,7 @@ import javafx.scene.paint.*;
 
 public class DrawableRectangle extends DrawFigure {
 
-    private Rectangle rectangle;
+    private final Rectangle rectangle;
 
     public DrawableRectangle(FigureInfo info, Figure figure, GraphicsContext gc) {
         super(info, figure, gc);
@@ -19,13 +19,13 @@ public class DrawableRectangle extends DrawFigure {
     @Override
     public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor,Figure figure) {
 
-        double x = Math.min(rectangle.getTopLeft().getX(), rectangle.getBottomRight().getX());
-        double y = Math.min(rectangle.getTopLeft().getY(), rectangle.getBottomRight().getY());
+        double x = Math.min(rectangle.getStartPoint().getX(), rectangle.getEndPoint().getX());
+        double y = Math.min(rectangle.getStartPoint().getY(), rectangle.getEndPoint().getY());
 
         double width = rectangle.getWidth();
         double height = rectangle.getHeight();
 
-        setShadowRect(gc, rectangle.getTopLeft(), rectangle.getBottomRight());
+        setShadowRect(gc, rectangle.getStartPoint(), rectangle.getEndPoint());
 
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
@@ -39,6 +39,10 @@ public class DrawableRectangle extends DrawFigure {
         gc.setLineWidth(1);
     }
 
+    public void moveAndSync(double deltaX, double deltaY) {
+        rectangle.move(deltaX, deltaY);
+    }
+
     private LinearGradient getGradientColor(Color firstFillColor, Color secondFillColor) {
         return new LinearGradient(0, 0, 1, 0, true,
                 CycleMethod.NO_CYCLE,
@@ -47,19 +51,22 @@ public class DrawableRectangle extends DrawFigure {
     }
 
     private void setRectangleArcType(GraphicsContext gc) {
-        double x = rectangle.getTopLeft().getX();
-        double y = rectangle.getTopLeft().getY();
+        double xStart = rectangle.getStartPoint().getX();
+        double yStart = rectangle.getStartPoint().getY();
+
+        double xEnd = rectangle.getEndPoint().getX();
+        double yEnd = rectangle.getEndPoint().getY();
 
         double width = rectangle.getWidth();
         double height = rectangle.getHeight();
 
         gc.setLineWidth(10);
         gc.setStroke(Color.LIGHTGRAY);
-        gc.strokeLine(x, y, x + width, y);
-        gc.strokeLine(x, y, x, y + height);
+        gc.strokeLine(xStart, yStart, xStart + width, yStart);
+        gc.strokeLine(xStart, yStart, xStart, yStart + height);
         gc.setStroke(Color.BLACK);
-        gc.strokeLine(x + width, y, x + width, y + height);
-        gc.strokeLine(x, y + height, x + width, y + height);
+        gc.strokeLine(xEnd, yEnd, xEnd, yEnd - height);
+        gc.strokeLine(xEnd - width, yEnd, xEnd, yEnd);
     }
 
     @Override
@@ -71,42 +78,23 @@ public class DrawableRectangle extends DrawFigure {
             Point newTopLeft = new Point(rectangle.getCenter().getX() - halfNewWidth, rectangle.getCenter().getY() - halfNewHeight);
             Point newBottomRight = new Point(rectangle.getCenter().getX() + halfNewWidth, rectangle.getCenter().getY() + halfNewHeight);
 
-            updateInfo(newTopLeft, newBottomRight, info);
+            updateInfo(newTopLeft, newBottomRight);
 
             // Una vez rotada, resetea el flag para evitar rotaciones repetidas.
             info.setRotate(false);
         }
     }
 
-    public void moveAndSync(double deltaX, double deltaY, FigureInfo info) {
-        double centerX = (rectangle.getTopLeft().getX() + rectangle.getBottomRight().getX()) / 2;
-        double centerY = (rectangle.getTopLeft().getY() + rectangle.getBottomRight().getY()) / 2;
-
-        double newCenterX = centerX + deltaX;
-        double newCenterY = centerY + deltaY;
-
-        double width = Math.abs(rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX());
-        double height = Math.abs(rectangle.getBottomRight().getY() - rectangle.getTopLeft().getY());
-
-        Point newTopLeft = new Point(newCenterX - width / 2, newCenterY - height / 2);
-        Point newBottomRight = new Point(newCenterX + width / 2, newCenterY + height / 2);
-
-        updateInfo(newTopLeft, newBottomRight, info);
-    }
-
-    public void updateInfo(Point newStartPoint, Point newEndPoint, FigureInfo info) {
-        rectangle.setTopLeft(newStartPoint);
-        rectangle.setBottomRight(newEndPoint);
-
-        info.setStartPoint(newStartPoint);
-        info.setEndPoint(newEndPoint);
+    public void updateInfo(Point newStartPoint, Point newEndPoint) {
+        rectangle.setStartPoint(newStartPoint);
+        rectangle.setEndPoint(newEndPoint);
     }
 
     public void customFlipRect(double deltaX, double deltaY, FigureInfo info, boolean isVertical){
-        Point newTopLeft = new Point(rectangle.getTopLeft().getX() + deltaX, rectangle.getTopLeft().getY() + deltaY);
-        Point newBottomRight = new Point(rectangle.getBottomRight().getX() + deltaX, rectangle.getBottomRight().getY() + deltaY);
+        Point newTopLeft = new Point(rectangle.getStartPoint().getX() + deltaX, rectangle.getStartPoint().getY() + deltaY);
+        Point newBottomRight = new Point(rectangle.getEndPoint().getX() + deltaX, rectangle.getEndPoint().getY() + deltaY);
 
-        updateInfo(newTopLeft, newBottomRight, info);
+        updateInfo(newTopLeft, newBottomRight);
 
         if(isVertical){
             info.setFlipV(false);

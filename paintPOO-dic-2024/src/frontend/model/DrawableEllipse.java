@@ -9,21 +9,22 @@ import javafx.scene.shape.ArcType;
 
 public class DrawableEllipse extends DrawFigure {
 
-    private Ellipse ellipse;
+    private final Ellipse ellipse;
 
     public DrawableEllipse(FigureInfo info, Figure figure, GraphicsContext gc) {
         super(info, figure, gc);
-        this.ellipse = (Ellipse) getFigure();
+        this.ellipse = (Ellipse) figure;
     }
 
     @Override
     public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor, Figure figure) {
-        double x = ellipse.getCenterPoint().getX() - ellipse.getsMayorAxis() / 2;
-        double y = ellipse.getCenterPoint().getY() - ellipse.getsMinorAxis() / 2;
-        double width = ellipse.getsMayorAxis();
-        double height = ellipse.getsMinorAxis();
+        double x = ellipse.getCenterPoint().getX() - ellipse.getMajorAxis() / 2;
+        double y = ellipse.getCenterPoint().getY() - ellipse.getMinorAxis() / 2;
 
-        setShadowOval(gc, ellipse.getCenterPoint(), ellipse.getsMinorAxis(), ellipse.getsMayorAxis());
+        double width = ellipse.getMajorAxis();
+        double height = ellipse.getMinorAxis();
+
+        setShadowOval(gc, ellipse.getCenterPoint(), ellipse.getMinorAxis(), ellipse.getMajorAxis());
 
         // Configuración de colores de relleno y borde
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
@@ -32,15 +33,15 @@ public class DrawableEllipse extends DrawFigure {
         // Dibuja la elipse
         gc.fillOval(x, y, width, height);
         gc.strokeOval(x, y, width, height);
+
         if (info.getArcType()) {
             setEllipseArcType(gc);
         }
         gc.setLineWidth(1);
     }
 
-    public void moveAndSync(double deltaX, double deltaY, FigureInfo info) {
+    public void moveAndSync(double deltaX, double deltaY) {
         ellipse.move(deltaX, deltaY);
-        updateInfo(info);
     }
 
     private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor) {
@@ -51,10 +52,11 @@ public class DrawableEllipse extends DrawFigure {
     }
 
     private void setEllipseArcType(GraphicsContext gc) {
-        double ellipseX = ellipse.getCenterPoint().getX() - ellipse.getWidth() / 2;
-        double ellipseY = ellipse.getCenterPoint().getY() - ellipse.getHeight() / 2;
-        double width = ellipse.getWidth();
-        double height = ellipse.getHeight();
+        double ellipseX = ellipse.getCenterPoint().getX() - ellipse.getMajorAxis() / 2;
+        double ellipseY = ellipse.getCenterPoint().getY() - ellipse.getMinorAxis() / 2;
+
+        double width = ellipse.getMajorAxis();
+        double height = ellipse.getMinorAxis();
 
         gc.setLineWidth(10);
         gc.setStroke(Color.LIGHTGRAY);
@@ -66,20 +68,16 @@ public class DrawableEllipse extends DrawFigure {
     @Override
     public void rotateRight(FigureInfo info) {
         if (info.getRotate()) {
-            double tempAxis = getFigure().getWidth();
-            ellipse.setsMayorAxis(ellipse.getsMinorAxis());
+            double tempAxis = getFigure().getMajorAxis();
+            ellipse.setsMayorAxis(ellipse.getMinorAxis());
             ellipse.setsMinorAxis(tempAxis);
-            updateInfo(info);
             info.setRotate(false);
         }
     }
 
-
     private void customFlipEllipse(double deltaX, double deltaY, FigureInfo info, boolean isVertical) {
         Point newCenter = new Point(ellipse.getCenterPoint().getX() + deltaX, ellipse.getCenterPoint().getY() + deltaY);
         ellipse.setCenterPoint(newCenter);
-
-        updateInfo(info);
 
         if (isVertical) {
             info.setFlipV(false);
@@ -89,35 +87,13 @@ public class DrawableEllipse extends DrawFigure {
     }
 
     public void flipVertically(FigureInfo info) {
-        double height = ellipse.getHeight();
+        double height = ellipse.getMinorAxis();
         customFlipEllipse(0, height, info, true);
     }
 
     public void flipHorizontally(FigureInfo info) {
-        double width = ellipse.getWidth();
+        double width = ellipse.getMajorAxis();
         customFlipEllipse(width, 0, info, false);
     }
 
-    public void updateInfo(FigureInfo info) {
-        double x = ellipse.getCenterPoint().getX();
-        double y = ellipse.getCenterPoint().getY();
-
-        double width = ellipse.getWidth();
-        double height = ellipse.getHeight();
-
-        if (isCircle(info)) { // Método para verificar si es un círculo
-            width /= 2;
-            height /= 2;
-        }
-
-        Point newStartPoint = new Point(x, y);
-        Point newEndPoint = new Point(x + width, y + height);
-
-        info.setStartPoint(newStartPoint);
-        info.setEndPoint(newEndPoint);
-    }
-
-    private boolean isCircle(FigureInfo info) {
-        return ellipse.getWidth() == ellipse.getHeight(); // O usa una bandera específica en `info`
-    }
 }

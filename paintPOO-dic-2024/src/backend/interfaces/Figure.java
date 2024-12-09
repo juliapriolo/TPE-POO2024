@@ -10,5 +10,14 @@ public interface Figure extends Movable{ //ver despues si queda figure como inte
 
     double getHeight();
 
+    double getMajorAxis();
+
+    double getMinorAxis();
+
     boolean contains(Point eventPoint);
+
+    Point getStartPoint();
+
+    Point getEndPoint();
 }
+

@@ -9,11 +9,11 @@ public class Circle extends Ellipse {
 
     @Override
     public String toString() {
-        return String.format("Círculo [Centro: %s, Radio: %.2f]", getCenterPoint(), getsMinorAxis()/2);
+        return String.format("Círculo [Centro: %s, Radio: %.2f]", getCenterPoint(), getMinorAxis()/2);
     }
 
     public double getRadius() {
-        return getsMinorAxis()/2;
+        return getMinorAxis()/2;
     }
 
     @Override
@@ -22,5 +22,10 @@ public class Circle extends Ellipse {
                 Math.pow(eventPoint.getY() - getCenterPoint().getY(), 2);
 
         return distance <= Math.pow(getRadius(), 2);
+    }
+
+    @Override
+    public Point getEndPoint(){
+        return new Point(getCenterPoint().getX() + getRadius(), getCenterPoint().getY());
     }
 }
