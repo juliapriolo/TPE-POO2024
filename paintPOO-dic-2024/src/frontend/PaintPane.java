@@ -234,7 +234,7 @@ public class PaintPane extends BorderPane {
 		biselado.setOnAction(event -> biseladoMethod());
 
 		copyFormatButton.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
+			if(checkSelectionButton()){
 				initializedCopyFormatButton = true;
 			}
 			redrawCanvas();
@@ -251,7 +251,7 @@ public class PaintPane extends BorderPane {
 		divide.setOnAction(event -> divideMethod());
 
 		bringToFrontButton.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
+			if(checkSelectionButton()){
 				layersMap.get(currentLayer).remove(selectedFigure);
 				layersMap.get(currentLayer).add( selectedFigure);
 				redrawCanvas();
@@ -259,9 +259,9 @@ public class PaintPane extends BorderPane {
 		});
 
 		sendToBackButton.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
+			if(checkSelectionButton()){
 				layersMap.get(currentLayer).remove(selectedFigure);
-				layersMap.get(currentLayer).add(0, selectedFigure);
+				layersMap.get(currentLayer).addFirst(selectedFigure);
 				redrawCanvas();
 			}
 		});
@@ -398,7 +398,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void setOnMouseDraggedMethod(MouseEvent event) {
-		if (selectionButton.isSelected() && selectedFigure != null) {
+		if (checkSelectionButton()) {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			double diffX = eventPoint.getX() - startPoint.getX();
 			double diffY = eventPoint.getY() - startPoint.getY();
@@ -420,7 +420,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void fillColorPickerMethod(){
-		if (selectedFigure != null && selectionButton.isSelected()) {
+		if (checkSelectionButton()) {
 			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 			figureInfo.setColor(fillColorPicker.getValue());
 			redrawCanvas();
@@ -428,7 +428,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void secondFillColorPickerMethod(){
-		if (selectedFigure != null && selectionButton.isSelected()) {
+		if (checkSelectionButton()) {
 			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 			figureInfo.setSecondaryColor(secondFillColorPicker.getValue());
 			redrawCanvas();
@@ -436,7 +436,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void shadowsChoiceBoxMethod(){
-		if(selectedFigure != null && selectionButton.isSelected()){
+		if(checkSelectionButton()){
 			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 			figureInfo.setShadowType(shadowsChoiceBox.getValue());
 			redrawCanvas();
@@ -466,7 +466,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void biseladoMethod(){
-		if(selectedFigure != null && selectionButton.isSelected()){
+		if(checkSelectionButton()){
 			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 			if (biselado.isSelected()) {
 				if (!figureInfo.getArcType()) {
@@ -483,7 +483,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void turnRightMethod(){
-		if (selectedFigure != null && selectionButton.isSelected()) {
+		if (checkSelectionButton()) {
 			FigureInfo info = figureInfoMap.get(selectedFigure);
 			info.setRotate();
 
@@ -496,7 +496,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void flipHMethod(){
-		if(selectedFigure != null && selectionButton.isSelected()){
+		if(checkSelectionButton()){
 			FigureInfo info = figureInfoMap.get(selectedFigure);
 			info.setFlipH();
 
@@ -508,8 +508,14 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
+
+	private boolean checkSelectionButton(){
+		return selectedFigure != null && selectionButton.isSelected();
+	}
+
+
 	private void flipVMethod(){
-		if(selectedFigure != null && selectionButton.isSelected()){
+		if(checkSelectionButton()){
 			FigureInfo info = figureInfoMap.get(selectedFigure);
 			info.setFlipV();
 
@@ -521,8 +527,16 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
+	private void updateInfoAndCanvas(Figure figure, FigureInfo figureInfo){
+		DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(figureInfo,figure);
+		figureInfoMap.put(figure, figureInfo);
+		drawFigures.put(figure, duplicateDrawFig);
+		figureToButtonMap.putIfAbsent(figure, figureToButtonMap.get(selectedFigure));
+	}
+
+
 	private void duplicateMethod(){
-		if(selectedFigure != null && selectionButton.isSelected()){
+		if(checkSelectionButton()){
 			Figure figure = selectedFigure;
 			FigureInfo originalInfo = figureInfoMap.get(figure);
 
@@ -531,15 +545,10 @@ public class PaintPane extends BorderPane {
 
 			Figure duplicateFigure = figureToButtonMap.get(figure).create(newStartPoint, newEndPoint);
 
-
 			FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
 					originalInfo.getShadowType(), originalInfo.getArcType(), originalInfo.getRotate(),
 					originalInfo.getFlipH(), originalInfo.getFlipV());
-
-			DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure);
-			figureInfoMap.put(duplicateFigure, duplicatedInfo);
-			drawFigures.put(duplicateFigure, duplicateDrawFig);
-			figureToButtonMap.putIfAbsent(duplicateFigure, figureToButtonMap.get(figure));
+			updateInfoAndCanvas(duplicateFigure, duplicatedInfo);
 			selectedFigure = null;
 			canvasState.addFigure(duplicateFigure);
 			layersMap.get(currentLayer).add(duplicateFigure);
@@ -548,7 +557,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void divideMethod(){
-		if(selectedFigure != null && selectionButton.isSelected()){
+		if(checkSelectionButton()){
 			FigureInfo info = figureInfoMap.get(selectedFigure);
 
 			double newHeight = selectedFigure.getHeight()/2;
@@ -563,36 +572,24 @@ public class PaintPane extends BorderPane {
 			Point centrePoint = selectedFigure.getCenterPoint();
 
 			Figure leftDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
-					new Point(xStartPoint,
-							yStartPoint + newHeight / 2),
-					new Point (centrePoint.getX(),
-							yEndPoint - newHeight/ 2),
-					new Point(centrePoint.getX() - newWidth/2, centrePoint.getY()),
-					newHeight, newWidth);
+					new Point(xStartPoint, yStartPoint + newHeight / 2),
+					new Point (centrePoint.getX(), yEndPoint - newHeight/ 2),
+					new Point(centrePoint.getX() - newWidth/2, centrePoint.getY()), newHeight, newWidth);
 
 			FigureInfo dividedInfoLeftFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
 					info.getShadowType(), info.getArcType(), info.getRotate(),
 					info.getFlipH(), info.getFlipV());
 
 			Figure rightDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
-					new Point(centrePoint.getX(),
-							yStartPoint + newHeight / 2),
-					new Point(xEndPoint,
-							yEndPoint - newHeight / 2),
-					new Point(centrePoint.getX() + newWidth/2, centrePoint.getY()),
-					newHeight, newWidth);
+					new Point(centrePoint.getX(), yStartPoint + newHeight / 2), new Point(xEndPoint, yEndPoint - newHeight / 2),
+					new Point(centrePoint.getX() + newWidth/2, centrePoint.getY()), newHeight, newWidth);
 
 			FigureInfo dividedInfoRightFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
 					info.getShadowType(), info.getArcType(), info.getRotate(),
 					info.getFlipH(), info.getFlipV());
 
-
-			figureInfoMap.put(leftDividedFigure, dividedInfoLeftFigure);
-			figureInfoMap.put(rightDividedFigure, dividedInfoRightFigure);
-			drawFigures.put(leftDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoLeftFigure,leftDividedFigure));
-			drawFigures.put(rightDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoRightFigure,rightDividedFigure));
-			figureToButtonMap.put(leftDividedFigure, figureToButtonMap.get(selectedFigure));
-			figureToButtonMap.put(rightDividedFigure, figureToButtonMap.get(selectedFigure));
+			updateInfoAndCanvas(leftDividedFigure, dividedInfoLeftFigure);
+			updateInfoAndCanvas(rightDividedFigure, dividedInfoRightFigure);
 
 			canvasState.deleteFigure(selectedFigure);
 			layersMap.get(currentLayer).remove(selectedFigure);
