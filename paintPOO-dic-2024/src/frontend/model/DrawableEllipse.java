@@ -24,17 +24,16 @@ public class DrawableEllipse extends DrawFigure {
 
         setShadowOval(gc, ellipse.getCenterPoint(), height, width);
 
-        // Configuración de colores de relleno y borde
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
-        // Dibuja la elipse
         gc.fillOval(topLeft.getX(), topLeft.getY(), width, height);
         gc.strokeOval(topLeft.getX(), topLeft.getY(), width, height);
 
         if (info.getArcType()) {
             setEllipseArcType(gc);
         }
+
         gc.setLineWidth(1);
     }
 

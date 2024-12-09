@@ -35,6 +35,16 @@ public class Ellipse implements Figure {
     }
 
     @Override
+    public Figure duplicateWithOffset(double offsetX, double offsetY) {
+        Point newCenter = new Point(
+                centerPoint.getX() + offsetX,
+                centerPoint.getY() + offsetY
+        );
+        return new Ellipse(newCenter, sMajorAxis, sMinorAxis);
+    }
+
+
+    @Override
     public Point getCenterPoint() {
         return centerPoint;
     }

@@ -535,19 +535,17 @@ public class PaintPane extends BorderPane {
 	}
 
 
-	private void duplicateMethod(){
-		if(checkSelectionButton()){
+	private void duplicateMethod() {
+		if (checkSelectionButton()) {
 			Figure figure = selectedFigure;
 			FigureInfo originalInfo = figureInfoMap.get(figure);
 
-			Point newStartPoint = new Point(figure.getStartPoint().getX() + offset, figure.getStartPoint().getY() + offset);
-			Point newEndPoint = new Point(figure.getEndPoint().getX() + offset, figure.getEndPoint().getY() + offset);
-
-			Figure duplicateFigure = figureToButtonMap.get(figure).create(newStartPoint, newEndPoint);
+			Figure duplicateFigure = figure.duplicateWithOffset(offset, offset);
 
 			FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
 					originalInfo.getShadowType(), originalInfo.getArcType(), originalInfo.getRotate(),
 					originalInfo.getFlipH(), originalInfo.getFlipV());
+
 			updateInfoAndCanvas(duplicateFigure, duplicatedInfo);
 			selectedFigure = null;
 			canvasState.addFigure(duplicateFigure);
@@ -555,6 +553,7 @@ public class PaintPane extends BorderPane {
 			redrawCanvas();
 		}
 	}
+
 
 	private void divideMethod(){
 		if(checkSelectionButton()){

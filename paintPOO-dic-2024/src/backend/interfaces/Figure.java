@@ -15,5 +15,8 @@ public interface Figure extends Movable{
     double getHeight();
 
     boolean contains(Point eventPoint);
+
+    Figure duplicateWithOffset(double offsetX, double offsetY);
+
 }
 

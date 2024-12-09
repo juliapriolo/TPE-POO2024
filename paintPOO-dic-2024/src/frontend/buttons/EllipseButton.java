@@ -15,10 +15,15 @@ public class EllipseButton extends FigureButton {
 
     @Override
     public Figure create(Point startPoint, Point endPoint) {
-        double sMajorAxis = Math.abs(endPoint.getX() - startPoint.getX());
-        double sMinorAxis = Math.abs(endPoint.getY() - startPoint.getY());
-        return new Ellipse(startPoint, sMajorAxis, sMinorAxis);
+        double width = Math.abs(endPoint.getX() - startPoint.getX());
+        double height = Math.abs(endPoint.getY() - startPoint.getY());
+
+        double centerX = Math.min(startPoint.getX(), endPoint.getX()) + width / 2;
+        double centerY = Math.min(startPoint.getY(), endPoint.getY()) + height / 2;
+
+        return new Ellipse(new Point(centerX, centerY), width, height);
     }
+
 
     @Override
     public Figure createDividedFigure(Point startPoint, Point endPoint, Point centrePoint, double height, double width){

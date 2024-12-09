@@ -25,6 +25,19 @@ public class Rectangle implements Figure {
     }
 
     @Override
+    public Figure duplicateWithOffset(double offsetX, double offsetY) {
+        Point newTopLeft = new Point(
+                topLeft.getX() + offsetX,
+                topLeft.getY() + offsetY
+        );
+        Point newBottomRight = new Point(
+                bottomRight.getX() + offsetX,
+                bottomRight.getY() + offsetY
+        );
+        return new Rectangle(newTopLeft, newBottomRight);
+    }
+
+    @Override
     public Point getEndPoint() {
         return bottomRight;
     }
