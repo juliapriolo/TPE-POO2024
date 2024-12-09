@@ -15,4 +15,7 @@ public interface Figure extends Movable{ //ver despues si queda figure como inte
     Point getStartPoint();
 
     Point getEndPoint();
+
+    Point getCenterPoint();
 }
+

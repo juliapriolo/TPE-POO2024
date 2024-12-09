@@ -20,6 +20,11 @@ public class RectangleButton extends FigureButton {
     }
 
     @Override
+    public Figure createDividedFigure(Point startPoint, Point endPoint, Point centrePoint, double height, double width){
+        return create(startPoint, endPoint);
+    }
+
+    @Override
     public DrawFigure createDrawFigure(FigureInfo info,Figure figure, GraphicsContext gc) {
         return new DrawableRectangle(info,figure,gc);
     }

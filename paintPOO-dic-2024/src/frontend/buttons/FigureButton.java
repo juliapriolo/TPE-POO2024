@@ -15,6 +15,7 @@ public abstract class FigureButton extends ToggleButton {
 
     public abstract Figure create(Point startPoint, Point endPoint);
 
-    public abstract DrawFigure createDrawFigure(FigureInfo info,Figure figure, GraphicsContext gc);
+    public abstract Figure createDividedFigure(Point startPoint, Point endPoint, Point centre, double height, double width);
 
+    public abstract DrawFigure createDrawFigure(FigureInfo info,Figure figure, GraphicsContext gc);
 }

@@ -27,45 +27,45 @@ public class PaintPane extends BorderPane {
 	private CanvasState canvasState;
 
 	// Canvas y relacionados
-	private Canvas canvas = new Canvas(800, 600); // el canva donde se va a dibujar
+	private final Canvas canvas = new Canvas(800, 600); // el canva donde se va a dibujar
 	private GraphicsContext gc = canvas.getGraphicsContext2D(); // permite dibujar las figuras, lineas, texto, imagen
-	private Color lineColor = Color.BLACK; // por deafult, la lineas tiene que ser negras
-	private Color defaultFillColor = Color.YELLOW; // por default el color de las formas es amarillo
-	private ShadowType defaultShadowType = ShadowType.NONE;
-	private boolean defaultArcType = false;
+	private final Color lineColor = Color.BLACK; // por deafult, la lineas tiene que ser negras
+	private final Color defaultFillColor = Color.YELLOW; // por default el color de las formas es amarillo
+	private final ShadowType defaultShadowType = ShadowType.NONE;
+	private final boolean defaultArcType = false;
 	private boolean initializedCopyFormatButton = false;
-	private boolean defaultRotate = false;
-	private boolean defaultFlipH = false;
-	private boolean defaultFlipV = false;
+	private final boolean defaultRotate = false;
+	private final boolean defaultFlipH = false;
+	private final boolean defaultFlipV = false;
 	private final double offset = 10;
 
 	// Botones Barra Izquierda
-	private ToggleButton selectionButton = new ToggleButton("Seleccionar");
-	private FigureButton rectangleButton = new RectangleButton("Rectángulo");
-	private FigureButton circleButton = new CircleButton("Círculo");
-	private FigureButton squareButton = new SquareButton("Cuadrado");
-	private FigureButton ellipseButton = new EllipseButton("Elipse");
-	private ToggleButton deleteButton = new ToggleButton("Borrar");
-	private ToggleButton copyFormatButton = new ToggleButton("Copiar Fmt.");
+	private final ToggleButton selectionButton = new ToggleButton("Seleccionar");
+	private final FigureButton rectangleButton = new RectangleButton("Rectángulo");
+	private final FigureButton circleButton = new CircleButton("Círculo");
+	private final FigureButton squareButton = new SquareButton("Cuadrado");
+	private final FigureButton ellipseButton = new EllipseButton("Elipse");
+	private final ToggleButton deleteButton = new ToggleButton("Borrar");
+	private final ToggleButton copyFormatButton = new ToggleButton("Copiar Fmt.");
 
 	//Botones Barra Derecha
-	private ToggleButton turnRightButton = new ToggleButton("Girar D");
-	private ToggleButton flipHorizontally = new ToggleButton("Voltear H");
-	private ToggleButton flipVertically = new ToggleButton("Voltear V");
-	private ToggleButton duplicate = new ToggleButton("Duplicar");
+	private final ToggleButton turnRightButton = new ToggleButton("Girar D");
+	private final ToggleButton flipHorizontally = new ToggleButton("Voltear H");
+	private final ToggleButton flipVertically = new ToggleButton("Voltear V");
+	private final ToggleButton duplicate = new ToggleButton("Duplicar");
 	private final ToggleButton divide = new ToggleButton("Dividir");
 
 	//Botones Barra Horizontal Superior
-	private ToggleButton bringToFrontButton = new ToggleButton("Traer al Frente");
-	private ToggleButton sendToBackButton = new ToggleButton("Enviar al Fondo");
-	private ToggleButton addLayer = new ToggleButton("Agregar capa");
-	private ToggleButton deleteLayer = new ToggleButton("Eliminar capa");
-	private ToggleButton showLayer = new RadioButton("Mostrar");
-	private ToggleButton hideLayer = new RadioButton("Ocultar");
+	private final ToggleButton bringToFrontButton = new ToggleButton("Traer al Frente");
+	private final ToggleButton sendToBackButton = new ToggleButton("Enviar al Fondo");
+	private final ToggleButton addLayer = new ToggleButton("Agregar capa");
+	private final ToggleButton deleteLayer = new ToggleButton("Eliminar capa");
+	private final ToggleButton showLayer = new RadioButton("Mostrar");
+	private final ToggleButton hideLayer = new RadioButton("Ocultar");
 
 	// Selector de color de relleno
-	private ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
-	private ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor); // inicializa el segundo color que se va a usar para hacer el difuminado
+	private final ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
+	private final ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor); // inicializa el segundo color que se va a usar para hacer el difuminado
 
 	// Dibujar una figura
 	private Point startPoint; // de donde arrancar a dibujar
@@ -86,21 +86,18 @@ public class PaintPane extends BorderPane {
 	// StatusBar
 	private StatusPane statusPane; //barra azul abajo del canvas, indica las coordenadas del cursor en el canvas
 
-	// Colores de relleno de cada figura
-	private Map<Figure, Color> figureColorMap = new HashMap<>(); //cada figura con su color de relleno
-
 	//Informacion para cada figura
-	private Map<Figure, FigureInfo> figureInfoMap = new HashMap<>();
+	private final Map<Figure, FigureInfo> figureInfoMap = new HashMap<>();
 
 	//Botones por figura
-	private Map<Figure, FigureButton> figureToButtonMap = new HashMap<>();
+	private final Map<Figure, FigureButton> figureToButtonMap = new HashMap<>();
 
-	private FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
+	private final FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
 
-	private Map<Figure, DrawFigure> drawFigures = new HashMap<>();
+	private final Map<Figure, DrawFigure> drawFigures = new HashMap<>();
 
 	//Layer Map
-	private SortedMap<Layer, List<Figure>> layersMap = new TreeMap<>();
+	private final SortedMap<Layer, List<Figure>> layersMap = new TreeMap<>();
 
 	private Layer currentLayer;
 
@@ -128,7 +125,6 @@ public class PaintPane extends BorderPane {
 		ToggleGroup layerVisibilityGroup = new ToggleGroup();
 		showLayer.setToggleGroup(layerVisibilityGroup);
 		hideLayer.setToggleGroup(layerVisibilityGroup);
-
 
 		shadowsChoiceBox.getItems().addAll(ShadowType.values());
 		Label shadowText = new Label("Formato");
@@ -207,15 +203,14 @@ public class PaintPane extends BorderPane {
 				if(button.isSelected() ) {
 					newFigure = button.create(startPoint, endPoint);
 					newButton = button;
-					figureToButtonMap.putIfAbsent(newFigure, newButton);
 
-					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(),
-							startPoint, endPoint, defaultShadowType, defaultArcType,
-							defaultRotate, defaultFlipH, defaultFlipV));
+					figureToButtonMap.putIfAbsent(newFigure, newButton);
+					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), defaultShadowType, defaultArcType, defaultRotate, defaultFlipH, defaultFlipV));
 					canvasState.addFigure(newFigure);
-					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure),newFigure,gc));
+					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure), newFigure, gc));
 					layersMap.get(currentLayer).add(newFigure);
 					startPoint = null;
+
 					redrawCanvas();
 				}
 			}
@@ -249,7 +244,6 @@ public class PaintPane extends BorderPane {
 				statusPane.updateStatus(eventPoint.toString());
 			}
 		});
-
 
 		canvas.setOnMouseClicked(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
@@ -294,13 +288,12 @@ public class PaintPane extends BorderPane {
 				double diffX = eventPoint.getX() - startPoint.getX();
 				double diffY = eventPoint.getY() - startPoint.getY();
 
-				// Obtener la DrawFigure y FigureInfo asociadas a la figura seleccionada
+				// Obtener la DrawFigure asociadas a la figura seleccionada
 				DrawFigure df = drawFigures.get(selectedFigure);
-				FigureInfo info = figureInfoMap.get(selectedFigure);
 
-				if (df != null && info != null) {
+				if (df != null) {
 					// Mover la figura y sincronizar los datos
-					df.moveAndSync(diffX, diffY, info);
+					df.moveAndSync(diffX, diffY);
 				}
 
 				// Actualizar el punto inicial para el próximo evento de arrastre
@@ -315,10 +308,12 @@ public class PaintPane extends BorderPane {
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				layersMap.get(currentLayer).remove(selectedFigure);
+				canvasState.deleteFigure(selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
 		});
+
 		setLeft(buttonsBox);
 		setRight(rightButtons);
 		setCenter(canvas);
@@ -373,7 +368,6 @@ public class PaintPane extends BorderPane {
 			redrawCanvas();
 		});
 
-
 		deleteLayer.setOnAction(event -> {
 			if(currentLayer.canDelete()) {
 				layersMap.remove(currentLayer);
@@ -381,7 +375,6 @@ public class PaintPane extends BorderPane {
 				layersChoiceBox.setValue(layersMap.firstKey());
 			}
 		});
-
 
 		addLayer.setOnAction(event -> {
 			int newLayerNumber = layersMap.size() + 1;
@@ -393,7 +386,6 @@ public class PaintPane extends BorderPane {
 			showLayer.setSelected(true);
 			redrawCanvas();
 		});
-
 
 		biselado.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
@@ -465,15 +457,13 @@ public class PaintPane extends BorderPane {
 				Figure figure = selectedFigure;
 				FigureInfo originalInfo = figureInfoMap.get(figure);
 
-				Point newStartPoint = new Point(originalInfo.getStartPoint().getX() + offset, originalInfo.getStartPoint().getY() + offset);
-				Point newEndPoint = new Point(originalInfo.getEndPoint().getX() + offset, originalInfo.getEndPoint().getY() + offset);
+				Point newStartPoint = new Point(figure.getStartPoint().getX() + offset, figure.getStartPoint().getY() + offset);
+				Point newEndPoint = new Point(figure.getEndPoint().getX() + offset, figure.getEndPoint().getY() + offset);
 
 				Figure duplicateFigure = figureToButtonMap.get(figure).create(newStartPoint, newEndPoint);
 
 				//duplico la info y pongo las nuevas coordenadas
-				FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
-						newStartPoint, newEndPoint, originalInfo.getShadowType(), originalInfo.getArcType(),
-						originalInfo.getRotate(), originalInfo.getFlipH(), originalInfo.getFlipV());
+				FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(), originalInfo.getShadowType(), originalInfo.getArcType(), originalInfo.getRotate(), originalInfo.getFlipH(), originalInfo.getFlipV());
 
 				//creo la draw figure
 				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure,gc);
@@ -486,6 +476,68 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 
 			}}));
+
+		divide.setOnAction(event -> {
+			if(selectedFigure != null && selectionButton.isSelected()){
+				FigureInfo info = figureInfoMap.get(selectedFigure);
+
+				double newHeight = selectedFigure.getHeight()/2;
+				double newWidth = selectedFigure.getWidth()/2;
+
+				double xStartPoint = selectedFigure.getStartPoint().getX();
+				double yStartPoint = selectedFigure.getStartPoint().getY();
+
+				double xEndPoint = selectedFigure.getEndPoint().getX();
+				double yEndPoint = selectedFigure.getEndPoint().getY();
+
+				Point centrePoint = selectedFigure.getCenterPoint();
+
+				//creo la figura de la izq
+				Figure leftDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
+						new Point(xStartPoint,
+								yStartPoint + newHeight / 2),
+						new Point (centrePoint.getX(),
+								yEndPoint - newHeight/ 2),
+						new Point(centrePoint.getX() - newWidth/2, centrePoint.getY()),
+						newHeight, newWidth);
+
+				FigureInfo dividedInfoLeftFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(), info.getShadowType(), info.getArcType(), info.getRotate(), info.getFlipH(), info.getFlipV());
+
+				//creo la figura de la derecha
+				Figure rightDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
+						new Point(centrePoint.getX(),
+								yStartPoint + newHeight / 2),
+						new Point(xEndPoint,
+								yEndPoint - newHeight / 2),
+						new Point(centrePoint.getX() + newWidth/2, centrePoint.getY()),
+						newHeight, newWidth);
+
+				FigureInfo dividedInfoRightFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(), info.getShadowType(), info.getArcType(), info.getRotate(), info.getFlipH(), info.getFlipV());
+
+
+				// agrego las figuras nuevas a los mapas
+				figureInfoMap.put(leftDividedFigure, dividedInfoLeftFigure);
+				figureInfoMap.put(rightDividedFigure, dividedInfoRightFigure);
+				drawFigures.put(leftDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoLeftFigure,leftDividedFigure, gc));
+				drawFigures.put(rightDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoRightFigure,rightDividedFigure, gc));
+				figureToButtonMap.put(leftDividedFigure, figureToButtonMap.get(selectedFigure));
+				figureToButtonMap.put(rightDividedFigure, figureToButtonMap.get(selectedFigure));
+
+				canvasState.deleteFigure(selectedFigure);
+				layersMap.get(currentLayer).remove(selectedFigure);
+				figureInfoMap.remove(selectedFigure);
+				drawFigures.remove(selectedFigure);
+
+				selectedFigure = null;
+
+				canvasState.addFigure(rightDividedFigure);
+				canvasState.addFigure(leftDividedFigure);
+				layersMap.get(currentLayer).add(rightDividedFigure);
+				layersMap.get(currentLayer).add(leftDividedFigure);
+
+				redrawCanvas();
+			}
+		});
 
 		bringToFrontButton.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
@@ -502,83 +554,6 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
-
-		divide.setOnAction(event -> {
-			if (selectedFigure != null && selectionButton.isSelected()) {
-				Figure figure = selectedFigure;
-				FigureInfo selectedFigureInfo = figureInfoMap.get(figure);
-
-				DrawFigure selectedDrawable = drawFigures.get(figure);
-
-				// Si el Drawable es nulo, no podemos dividir la figura
-				if (selectedDrawable != null) {
-					DrawFigure[] dividedFigures = selectedDrawable.divide(selectedFigureInfo, gc);
-
-					DrawFigure dividedFigure1 = dividedFigures[0];
-					DrawFigure dividedFigure2 = dividedFigures[1];
-
-
-					Figure dividedFigure1Obj = dividedFigure1.getFigure();
-					Figure dividedFigure2Obj = dividedFigure2.getFigure();
-
-
-					// Crear nuevas instancias de FigureInfo manualmente
-					FigureInfo dividedFigure1Info = new FigureInfo(
-							selectedFigureInfo.getColor(),
-							selectedFigureInfo.getSecondaryColor(),
-							dividedFigure1Obj.getStartPoint(),
-							dividedFigure1Obj.getEndPoint(),
-							selectedFigureInfo.getShadowType(),
-							selectedFigureInfo.getArcType(),
-							selectedFigureInfo.getRotate(),
-							selectedFigureInfo.getFlipH(),
-							selectedFigureInfo.getFlipV()
-					);
-
-					DrawFigure div1Fig = figureToButtonMap.get(selectedFigure).createDrawFigure(dividedFigure1Info, dividedFigure1Obj, gc);
-
-
-					FigureInfo dividedFigure2Info = new FigureInfo(
-							selectedFigureInfo.getColor(),
-							selectedFigureInfo.getSecondaryColor(),
-							selectedFigureInfo.getStartPoint(),
-							selectedFigureInfo.getEndPoint(),
-							selectedFigureInfo.getShadowType(),
-							selectedFigureInfo.getArcType(),
-							selectedFigureInfo.getRotate(),
-							selectedFigureInfo.getFlipH(),
-							selectedFigureInfo.getFlipV()
-					);
-
-					DrawFigure div2Fig = figureToButtonMap.get(selectedFigure).createDrawFigure(dividedFigure2Info, dividedFigure2Obj, gc);
-
-
-					figureInfoMap.put(dividedFigure1Obj, dividedFigure1Info);
-					figureInfoMap.put(dividedFigure2Obj, dividedFigure2Info);
-
-					drawFigures.put(dividedFigure1Obj, div1Fig);
-					drawFigures.put(dividedFigure2Obj, div2Fig);
-
-					figureToButtonMap.putIfAbsent(dividedFigure1Obj, figureToButtonMap.get(figure));
-					figureToButtonMap.putIfAbsent(dividedFigure2Obj, figureToButtonMap.get(figure));
-
-					selectedFigure = null;
-
-					canvasState.deleteFigure(selectedDrawable.getFigure());
-					layersMap.get(currentLayer).remove(selectedDrawable.getFigure());
-
-
-					canvasState.addFigure(dividedFigure1Obj);
-					canvasState.addFigure(dividedFigure2Obj);
-					layersMap.get(currentLayer).add(dividedFigure1Obj);
-					layersMap.get(currentLayer).add(dividedFigure2Obj);
-
-					redrawCanvas();
-				}
-			}
-		});
-
-
 	}
 
 	private void redrawCanvas() {

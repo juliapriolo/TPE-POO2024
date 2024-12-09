@@ -11,10 +11,16 @@ public class SquareButton extends RectangleButton{
 
     @Override
     public Figure create(Point startPoint, Point endPoint) {
-        return new Square(startPoint, Math.min(
-                Math.abs(endPoint.getX() - startPoint.getX()),
-                Math.abs(endPoint.getY() - startPoint.getY())
-        ));
+        return new Square(startPoint, getSize(startPoint, endPoint));
+    }
+
+    @Override
+    public Figure createDividedFigure(Point startPoint, Point endPoint, Point centrePoint, double height, double width){
+        return create(startPoint, endPoint);
+    }
+
+    private double getSize(Point startPoint, Point endPoint){
+        return Math.abs(endPoint.getX() - startPoint.getX());
     }
 
 }

@@ -16,4 +16,9 @@ public class CircleButton extends EllipseButton {
         return new Circle(startPoint, radius);
     }
 
+    @Override
+    public Figure createDividedFigure(Point startPoint, Point endPoint, Point centrePoint, double height, double width){
+        return new Circle(centrePoint, height/2);
+    }
+
 }

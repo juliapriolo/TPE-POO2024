@@ -24,14 +24,6 @@ public class Point implements Movable {
         return y;
     }
 
-    public void incrementX(double x) {
-        this.x += x;
-    }
-
-    public void incrementY(double y) {
-        this.y += y;
-    }
-
     @Override
     public String toString() {
         return String.format("{%.2f , %.2f}", x, y);
