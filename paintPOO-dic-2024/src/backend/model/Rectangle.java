@@ -13,44 +13,32 @@ public class Rectangle implements Figure {
 
     @Override
     public double getWidth() {
-        return Math.abs(getStartPoint().getX() - getEndPoint().getX());
+        return Math.abs(getTopLeft().getX() - getBottomRight().getX());
     }
 
     @Override
     public double getHeight() {
-        return Math.abs(getStartPoint().getY() - getEndPoint().getY());
+        return Math.abs(getTopLeft().getY() - getBottomRight().getY());
     }
 
-    @Override
-    public double getMajorAxis(){
-        return 0;
-    }
-
-    @Override
-    public double getMinorAxis(){
-        return 0;
-    }
-
-    @Override
-    public Point getStartPoint() {
+    public Point getTopLeft() {
         return topLeft;
     }
 
-    @Override
-    public Point getEndPoint() {
+    public Point getBottomRight() {
         return bottomRight;
     }
 
     public Point getCenter(){
-        return new Point((getStartPoint().getX() + getEndPoint().getX()) / 2, (getStartPoint().getY() + getEndPoint().getY()) / 2);
+        return new Point((getTopLeft().getX() + getBottomRight().getX()) / 2, (getTopLeft().getY() + getBottomRight().getY()) / 2);
     }
 
-    public void setStartPoint(Point startPoint) {
-        this.topLeft = startPoint;
+    public void setTopLeft(Point topLeft){
+        this.topLeft = topLeft;
     }
 
-    public void setEndPoint(Point endPoint){
-        this.bottomRight = endPoint;
+    public void setBottomRight(Point bottomRight){
+        this.bottomRight = bottomRight;
     }
 
     @Override
@@ -70,4 +58,5 @@ public class Rectangle implements Figure {
         return eventPoint.getX() > topLeft.getX() && eventPoint.getX() < bottomRight.getX() &&
                 eventPoint.getY() > topLeft.getY() && eventPoint.getY() < bottomRight.getY();
     }
+
 }

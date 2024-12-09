@@ -6,11 +6,11 @@ import backend.interfaces.Figure;
 public class Ellipse implements Figure {
 
     private Point centerPoint;
-    private double sMajorAxis, sMinorAxis;
+    private double sMayorAxis, sMinorAxis;
 
-    public Ellipse(Point centerPoint, double sMajorAxis, double sMinorAxis) {
+    public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
         this.centerPoint = centerPoint;
-        this.sMajorAxis = sMajorAxis;
+        this.sMayorAxis = sMayorAxis;
         this.sMinorAxis = sMinorAxis;
     }
 
@@ -22,31 +22,21 @@ public class Ellipse implements Figure {
         this.centerPoint = centerPoint;
     }
 
-    @Override
-    public Point getStartPoint() {
-        return getCenterPoint();
+    public double getsMayorAxis() {
+        return sMayorAxis;
     }
 
-    @Override
-    public Point getEndPoint() {
-        return new Point(centerPoint.getX() + getMajorAxis(), centerPoint.getY() + getMinorAxis());
-    }
-
-    public double getMajorAxis() {
-        return sMajorAxis;
-    }
-
-    public double getMinorAxis() {
+    public double getsMinorAxis() {
         return sMinorAxis;
     }
 
     @Override
     public String toString() {
-        return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", centerPoint, sMajorAxis, sMinorAxis);
+        return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", centerPoint, sMayorAxis, sMinorAxis);
     }
 
     public void setsMayorAxis(double sMayorAxis) {
-        this.sMajorAxis = sMayorAxis;
+        this.sMayorAxis = sMayorAxis;
     }
 
     public void setsMinorAxis(double sMinorAxis) {
@@ -61,27 +51,19 @@ public class Ellipse implements Figure {
     //Verifica directamente en el rectangulo que la contiene
     @Override
     public boolean contains(Point eventPoint) {
-        double h = centerPoint.getX();
-        double k = centerPoint.getY();
-        double a = sMajorAxis / 2;
-        double b = sMinorAxis / 2;
+        double x = centerPoint.getX() - sMayorAxis / 2;
+        double y = centerPoint.getY() - sMinorAxis / 2;
 
-        double x = eventPoint.getX();
-        double y = eventPoint.getY();
-
-        // Ecuación de la elipse
-        double equation = Math.pow((x - h) / a, 2) + Math.pow((y - k) / b, 2);
-
-        return equation <= 1; // El punto está dentro de la elipse
+        return eventPoint.getX() >= x && eventPoint.getX() <= x + getWidth() && eventPoint.getY() >= y && eventPoint.getY() <= y + getHeight();
     }
 
     @Override
     public double getWidth() {
-        return 0;
+        return sMayorAxis;
     }
 
     @Override
     public double getHeight() {
-        return 0;
+        return sMinorAxis;
     }
 }

@@ -7,9 +7,9 @@ import javafx.scene.paint.Color;
 
 public abstract class DrawFigure {
 
-    private final FigureInfo info;
+    private FigureInfo info;
 
-    private final Figure figure;
+    private Figure figure;
 
     private final GraphicsContext gc;
 
@@ -27,8 +27,9 @@ public abstract class DrawFigure {
 
     public abstract void flipVertically(FigureInfo info);
 
-    public abstract void moveAndSync(double deltaX, double deltaY);
+    public abstract void moveAndSync(double deltaX, double deltaY, FigureInfo info);
 
+    public abstract DrawFigure[] divide(FigureInfo info,GraphicsContext gc);
 
     public void setShadowOval(GraphicsContext gc, Point centerPoint, double sMinorAxis, double sMayorAxis){
         if(!info.getShadowType().equals(ShadowType.NONE)){

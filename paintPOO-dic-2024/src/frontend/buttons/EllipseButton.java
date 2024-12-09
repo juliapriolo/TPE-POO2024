@@ -16,14 +16,9 @@ public class EllipseButton extends FigureButton {
 
     @Override
     public Figure create(Point startPoint, Point endPoint) {
-        double sMajorAxis = Math.abs(endPoint.getX() - startPoint.getX());
+        double sMayorAxis = Math.abs(endPoint.getX() - startPoint.getX());
         double sMinorAxis = Math.abs(endPoint.getY() - startPoint.getY());
-        return new Ellipse(startPoint, sMajorAxis, sMinorAxis);
-    }
-
-    @Override
-    public Figure createDividedFigure(Point startPoint, Point endPoint, Point centrePoint, double height, double width){
-        return new Ellipse(centrePoint, width, height);
+        return new Ellipse(startPoint, sMayorAxis, sMinorAxis);
     }
 
     @Override
