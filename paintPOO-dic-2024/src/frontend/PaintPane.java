@@ -251,7 +251,7 @@ public class PaintPane extends BorderPane {
 		divide.setOnAction(event -> divideMethod());
 
 		bringToFrontButton.setOnAction(event -> {
-			if(checkSelectionButton() && bringToFrontButton.isSelected()){
+			if(checkSelectionButton()){
 				layersMap.get(currentLayer).remove(selectedFigure);
 				layersMap.get(currentLayer).add( selectedFigure);
 				redrawCanvas();
@@ -259,7 +259,7 @@ public class PaintPane extends BorderPane {
 		});
 
 		sendToBackButton.setOnAction(event -> {
-			if(checkSelectionButton() && sendToBackButton.isSelected()){
+			if(checkSelectionButton()){
 				layersMap.get(currentLayer).remove(selectedFigure);
 				layersMap.get(currentLayer).addFirst(selectedFigure);
 				redrawCanvas();
