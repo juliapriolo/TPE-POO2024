@@ -183,6 +183,7 @@ public class PaintPane extends BorderPane {
 			startPoint = new Point(event.getX(), event.getY());
 		});
 
+
 		canvas.setOnMouseReleased(event -> {
 			Point endPoint = new Point(event.getX(), event.getY());
 			if(startPoint == null || endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
@@ -202,12 +203,15 @@ public class PaintPane extends BorderPane {
 					canvasState.addFigure(newFigure);
 					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure), newFigure));
 					layersMap.get(currentLayer).add(newFigure);
+					biselado.setSelected(false);
 					startPoint = null;
 
 					redrawCanvas();
 				}
 			}
 		});
+
+
 		canvas.setOnMouseMoved(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
@@ -263,6 +267,10 @@ public class PaintPane extends BorderPane {
 								}
 								found = true;
 								selectedFigure = figure;
+								fillColorPicker.setValue(figureInfoMap.get(selectedFigure).getColor());
+								secondFillColorPicker.setValue(figureInfoMap.get(selectedFigure).getSecondaryColor());
+								shadowsChoiceBox.setValue(figureInfoMap.get(selectedFigure).getShadowType());
+								biselado.setSelected(figureInfoMap.get(selectedFigure).getArcType());
 								label.append(figure.toString());
 								break;
 							}
@@ -282,7 +290,6 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
-
 
 
 		canvas.setOnMouseDragged(event -> {
@@ -397,6 +404,7 @@ public class PaintPane extends BorderPane {
 						redrawCanvas();
 					}
 				}
+
 			}
 		});
 
