@@ -248,25 +248,34 @@ public class PaintPane extends BorderPane {
 		canvas.setOnMouseClicked(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
-			if(selectionButton.isSelected()) {
-				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Figure figure : canvasState.figures()) {
-					if(figureBelongs(figure, eventPoint)) {
-						if(initializedCopyFormatButton && selectedFigure != null) {
 
-							FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
-							FigureInfo destinyFigureInfo = figureInfoMap.get(figure);
+			StringBuilder label = new StringBuilder("Se seleccionó: ");
 
-							destinyFigureInfo.setColor(originFigureInfo.getColor());
-							destinyFigureInfo.setSecondaryColor(originFigureInfo.getSecondaryColor());
-							destinyFigureInfo.setShadowType(originFigureInfo.getShadowType());
-							destinyFigureInfo.transferArcType(originFigureInfo.getArcType());
-							initializedCopyFormatButton = false;
+			if (selectionButton.isSelected()) {
+				// Recorremos las capas y verificamos si están visibles
+				for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
+					Layer layer = entry.getKey();
 
+					// Solo procesamos las capas visibles
+					if (layer.getVisibility()) {
+						for (Figure figure : entry.getValue()) { // Usamos las figuras de la capa actual
+							if (figureBelongs(figure, eventPoint)) {
+								if (initializedCopyFormatButton && selectedFigure != null) {
+
+									FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
+									FigureInfo destinyFigureInfo = figureInfoMap.get(figure);
+
+									destinyFigureInfo.setColor(originFigureInfo.getColor());
+									destinyFigureInfo.setSecondaryColor(originFigureInfo.getSecondaryColor());
+									destinyFigureInfo.setShadowType(originFigureInfo.getShadowType());
+									destinyFigureInfo.transferArcType(originFigureInfo.getArcType());
+									initializedCopyFormatButton = false;
+								}
+								found = true;
+								selectedFigure = figure;
+								label.append(figure.toString());
+							}
 						}
-						found = true;
-						selectedFigure = figure;
-						label.append(figure.toString());
 					}
 				}
 				if (found) {
@@ -278,6 +287,7 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
 
 		canvas.setOnMouseDragged(event -> {
 			if (selectionButton.isSelected() && selectedFigure != null) {
