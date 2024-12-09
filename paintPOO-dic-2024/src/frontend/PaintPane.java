@@ -23,14 +23,13 @@ import java.util.*;
 
 public class PaintPane extends BorderPane {
 
-	// BackEnd
 	private CanvasState canvasState;
 
 	// Canvas y relacionados
-	private final Canvas canvas = new Canvas(800, 600); // el canva donde se va a dibujar
-	private GraphicsContext gc = canvas.getGraphicsContext2D(); // permite dibujar las figuras, lineas, texto, imagen
-	private final Color lineColor = Color.BLACK; // por deafult, la lineas tiene que ser negras
-	private final Color defaultFillColor = Color.YELLOW; // por default el color de las formas es amarillo
+	private final Canvas canvas = new Canvas(800, 600);
+	private GraphicsContext gc = canvas.getGraphicsContext2D();
+	private final Color lineColor = Color.BLACK;
+	private final Color defaultFillColor = Color.YELLOW;
 	private final ShadowType defaultShadowType = ShadowType.NONE;
 	private final boolean defaultArcType = false;
 	private boolean initializedCopyFormatButton = false;
@@ -64,14 +63,12 @@ public class PaintPane extends BorderPane {
 	private final ToggleButton hideLayer = new RadioButton("Ocultar");
 
 	// Selector de color de relleno
-	private final ColorPicker fillColorPicker = new ColorPicker(defaultFillColor); // inicializa el color default (amarillo) de relleno, ColorPicker es el boton para seleccionar colores
-	private final ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor); // inicializa el segundo color que se va a usar para hacer el difuminado
+	private final ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
+	private final ColorPicker secondFillColorPicker = new ColorPicker(defaultFillColor);
 
-	// Dibujar una figura
-	private Point startPoint; // de donde arrancar a dibujar
-
-	// Seleccionar una figura
-	private Figure selectedFigure; // la figura seleccionada
+	private Point startPoint;
+	private Figure selectedFigure;
+	private Layer currentLayer;
 
 	//Sombra
 	private final ChoiceBox<ShadowType> shadowsChoiceBox = new ChoiceBox<>();
@@ -84,7 +81,7 @@ public class PaintPane extends BorderPane {
 	private final CheckBox biselado = new CheckBox("Biselado");
 
 	// StatusBar
-	private StatusPane statusPane; //barra azul abajo del canvas, indica las coordenadas del cursor en el canvas
+	private StatusPane statusPane;
 
 	//Informacion para cada figura
 	private final Map<Figure, FigureInfo> figureInfoMap = new HashMap<>();
@@ -92,14 +89,15 @@ public class PaintPane extends BorderPane {
 	//Botones por figura
 	private final Map<Figure, FigureButton> figureToButtonMap = new HashMap<>();
 
-	private final FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
-
+	//Drawable Map
 	private final Map<Figure, DrawFigure> drawFigures = new HashMap<>();
 
 	//Layer Map
 	private final SortedMap<Layer, List<Figure>> layersMap = new TreeMap<>();
 
-	private Layer currentLayer;
+	private final FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
+
+
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
@@ -387,7 +385,7 @@ public class PaintPane extends BorderPane {
 		});
 
 		addLayer.setOnAction(event -> {
-			int newLayerNumber = layersMap.size() + 1;
+			int newLayerNumber = canvasState.getLastLayerAndIncrement();
 			Layer newLayer = new Layer(newLayerNumber);
 			layersMap.put(newLayer, new ArrayList<>());
 			layersChoiceBox.getItems().add(newLayer);
