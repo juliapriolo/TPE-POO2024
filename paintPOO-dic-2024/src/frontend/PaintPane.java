@@ -251,18 +251,24 @@ public class PaintPane extends BorderPane {
 		divide.setOnAction(event -> divideMethod());
 
 		bringToFrontButton.setOnAction(event -> {
-			if(checkSelectionButton()){
-				layersMap.get(currentLayer).remove(selectedFigure);
-				layersMap.get(currentLayer).add(selectedFigure);
-				redrawCanvas();
+			if (checkSelectionButton()) {
+				List<Figure> currentLayerFigures = layersMap.get(currentLayer);
+				if (currentLayerFigures.contains(selectedFigure)) {
+					currentLayerFigures.remove(selectedFigure);
+					currentLayerFigures.add(selectedFigure);
+					redrawCanvas();
+				}
 			}
 		});
 
 		sendToBackButton.setOnAction(event -> {
-			if(checkSelectionButton()){
-				layersMap.get(currentLayer).remove(selectedFigure);
-				layersMap.get(currentLayer).addFirst(selectedFigure);
-				redrawCanvas();
+			if (checkSelectionButton()) {
+				List<Figure> currentLayerFigures = layersMap.get(currentLayer);
+				if (currentLayerFigures.contains(selectedFigure)) {
+					currentLayerFigures.remove(selectedFigure);
+					currentLayerFigures.addFirst(selectedFigure);
+					redrawCanvas();
+				}
 			}
 		});
 	}

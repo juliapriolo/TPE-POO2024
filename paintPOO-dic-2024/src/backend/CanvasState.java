@@ -20,9 +20,9 @@ public class CanvasState {
         list.remove(figure);
     }
 
-    //public Iterable<Figure> figures() {
-     //   return new ArrayList<>(list);
-    //}
+    public Iterable<Figure> figures() {
+        return new ArrayList<>(list);
+    }
 
     public int getCurrentLayer(){
         return currentLayer;
