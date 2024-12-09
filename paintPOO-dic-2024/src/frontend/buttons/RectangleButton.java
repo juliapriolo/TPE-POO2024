@@ -25,8 +25,8 @@ public class RectangleButton extends FigureButton {
     }
 
     @Override
-    public DrawFigure createDrawFigure(FigureInfo info,Figure figure, GraphicsContext gc) {
-        return new DrawableRectangle(info,figure,gc);
+    public DrawFigure createDrawFigure(FigureInfo info,Figure figure) {
+        return new DrawableRectangle(info,figure);
     }
 
 

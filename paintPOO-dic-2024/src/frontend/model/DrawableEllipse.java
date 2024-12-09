@@ -11,8 +11,8 @@ public class DrawableEllipse extends DrawFigure {
 
     private final Ellipse ellipse;
 
-    public DrawableEllipse(FigureInfo info, Figure figure, GraphicsContext gc) {
-        super(info, figure, gc);
+    public DrawableEllipse(FigureInfo info, Figure figure) {
+        super(info, figure);
         this.ellipse = (Ellipse) figure;
     }
 

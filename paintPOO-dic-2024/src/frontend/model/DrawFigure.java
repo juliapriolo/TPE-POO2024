@@ -11,12 +11,10 @@ public abstract class DrawFigure {
 
     private final Figure figure;
 
-    private final GraphicsContext gc;
 
-    public DrawFigure(FigureInfo info,Figure figure, GraphicsContext gc) {
+    public DrawFigure(FigureInfo info,Figure figure) {
         this.figure = figure;
         this.info = info;
-        this.gc = gc;
     }
 
     public abstract void draw(GraphicsContext gc, FigureInfo info, Color colorStroke, Figure figure);

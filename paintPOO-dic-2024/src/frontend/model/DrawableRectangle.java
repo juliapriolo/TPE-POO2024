@@ -11,8 +11,8 @@ public class DrawableRectangle extends DrawFigure {
 
     private final Rectangle rectangle;
 
-    public DrawableRectangle(FigureInfo info, Figure figure, GraphicsContext gc) {
-        super(info, figure, gc);
+    public DrawableRectangle(FigureInfo info, Figure figure) {
+        super(info, figure);
         this.rectangle = (Rectangle) figure;
     }
 
@@ -80,7 +80,6 @@ public class DrawableRectangle extends DrawFigure {
 
             updateInfo(newTopLeft, newBottomRight);
 
-            // Una vez rotada, resetea el flag para evitar rotaciones repetidas.
             info.setRotate(false);
         }
     }

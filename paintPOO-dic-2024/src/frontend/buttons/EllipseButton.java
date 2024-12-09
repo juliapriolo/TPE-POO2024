@@ -27,7 +27,7 @@ public class EllipseButton extends FigureButton {
     }
 
     @Override
-    public DrawFigure createDrawFigure(FigureInfo info,Figure figure, GraphicsContext gc) {
-        return new DrawableEllipse(info, figure, gc);
+    public DrawFigure createDrawFigure(FigureInfo info,Figure figure) {
+        return new DrawableEllipse(info, figure);
     }
 }

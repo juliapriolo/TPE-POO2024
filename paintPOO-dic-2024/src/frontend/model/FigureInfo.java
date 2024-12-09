@@ -43,9 +43,7 @@ public class FigureInfo {
         this.rotateRight = rotateRight;
     }
 
-    public void setRotate() {
-        this.rotateRight = true; // Activa la rotación
-    }
+    public void setRotate() {this.rotateRight = true;}
 
     public boolean getFlipH(){
         return flipH;

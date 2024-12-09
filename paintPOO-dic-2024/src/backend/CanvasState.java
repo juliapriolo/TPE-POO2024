@@ -16,16 +16,8 @@ public class CanvasState {
         list.add(figure);
     }
 
-    public void addFigure(int position, Figure figure){
-        list.add(position, figure);
-    }
-
     public void deleteFigure(Figure figure) {
         list.remove(figure);
-    }
-
-    public Iterable<Figure> figures() {
-        return new ArrayList<>(list);
     }
 
     public int getCurrentLayer(){
@@ -33,8 +25,7 @@ public class CanvasState {
     }
 
     public int getLastLayerAndIncrement(){
-        return lastLayer++;
+        return ++lastLayer;
     }
-
 
 }

@@ -98,12 +98,10 @@ public class PaintPane extends BorderPane {
 	private final FigureButton[] figureButtons = {circleButton, ellipseButton, rectangleButton, squareButton};
 
 
-
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 
-		// configura el tamanio de cada boton en toolsArr y los lace que sean seleccion unica (ademas de la manito)
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : toolsArr) {
@@ -130,7 +128,7 @@ public class PaintPane extends BorderPane {
 
 		Label actionsText = new Label("Acciones");
 
-		// agrega todos los botones juntos en una misma columna (la columna en este caso es la de la izq, gris)
+		//Agrega los botones de la columna izquierda
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
 		buttonsBox.getChildren().add(fillColorPicker);
@@ -144,7 +142,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPrefWidth(100);
 		gc.setLineWidth(1);
 
-		//agrega los otros botones juntos en una misma columna(del lado derecho, gris)
+		//Agrega los botones de la columna derecha
 		VBox rightButtons = new VBox(10);
 		setRight(rightButtons);
 		rightButtons.getChildren().add(actionsText);
@@ -154,14 +152,12 @@ public class PaintPane extends BorderPane {
 		rightButtons.setPrefWidth(100);
 		gc.setLineWidth(1);
 
-		//agrega los botones de las capas a una fila arriba del canvas
 
-		//Inicializa el layersMap con 3 layers (con figuras vacias)
+		//Agrega los botones de las capas a una fila arriba del canvas
 		for(int i = canvasState.getCurrentLayer(); i <= 3; i++){
 			layersMap.putIfAbsent(new Layer(i), new ArrayList<>());
 		}
 
-		//Setea la capa en la primera
 		layersChoiceBox.setValue(layersMap.firstKey());
 		currentLayer = layersMap.firstKey();
 		showLayer.fire();
@@ -189,7 +185,6 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseReleased(event -> {
 			Point endPoint = new Point(event.getX(), event.getY());
-			// si no hay tal startPoint o quiero crear la forma arrastrando el mouse de abajo hacia arriba no funca
 			if(startPoint == null || endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
 				return ;
 			}
@@ -205,7 +200,7 @@ public class PaintPane extends BorderPane {
 					figureToButtonMap.putIfAbsent(newFigure, newButton);
 					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), defaultShadowType, defaultArcType, defaultRotate, defaultFlipH, defaultFlipV));
 					canvasState.addFigure(newFigure);
-					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure), newFigure, gc));
+					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure), newFigure));
 					layersMap.get(currentLayer).add(newFigure);
 					startPoint = null;
 
@@ -213,29 +208,30 @@ public class PaintPane extends BorderPane {
 				}
 			}
 		});
-
 		canvas.setOnMouseMoved(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
+			List<Map.Entry<Layer, List<Figure>>> layersList = new ArrayList<>(layersMap.entrySet());
+			Collections.reverse(layersList);
 
-			// Recorremos las capas y verificamos si están visibles
-			for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
+			for (Map.Entry<Layer, List<Figure>> entry : layersList) {
 				Layer layer = entry.getKey();
-
-				// Solo procesamos las capas visibles
 				if (layer.getVisibility()) {
-					// Recorremos las figuras dentro de la capa visible
-					for (Figure figure : entry.getValue()) {
+					List<Figure> figures = entry.getValue();
+					for (int i = figures.size() - 1; i >= 0; i--) {
+						Figure figure = figures.get(i);
 						if (figureBelongs(figure, eventPoint)) {
 							found = true;
-							label.append(figure.toString());
+							label = new StringBuilder(figure.toString());
+							break;
 						}
 					}
 				}
+				if (found) {
+					break;
+				}
 			}
-
-			// Actualiza el estado dependiendo de si se encontró o no una figura
 			if (found) {
 				statusPane.updateStatus(label.toString());
 			} else {
@@ -246,23 +242,19 @@ public class PaintPane extends BorderPane {
 		canvas.setOnMouseClicked(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
-
 			StringBuilder label = new StringBuilder("Se seleccionó: ");
 
 			if (selectionButton.isSelected()) {
-				// Recorremos las capas y verificamos si están visibles
 				for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
 					Layer layer = entry.getKey();
-
-					// Solo procesamos las capas visibles
 					if (layer.getVisibility()) {
-						for (Figure figure : entry.getValue()) { // Usamos las figuras de la capa actual
+						List<Figure> figures = entry.getValue();
+						for (int i = figures.size() - 1; i >= 0; i--) {
+							Figure figure = figures.get(i);
 							if (figureBelongs(figure, eventPoint)) {
 								if (initializedCopyFormatButton && selectedFigure != null) {
-
 									FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
 									FigureInfo destinyFigureInfo = figureInfoMap.get(figure);
-
 									destinyFigureInfo.setColor(originFigureInfo.getColor());
 									destinyFigureInfo.setSecondaryColor(originFigureInfo.getSecondaryColor());
 									destinyFigureInfo.setShadowType(originFigureInfo.getShadowType());
@@ -272,8 +264,12 @@ public class PaintPane extends BorderPane {
 								found = true;
 								selectedFigure = figure;
 								label.append(figure.toString());
+								break;
 							}
 						}
+					}
+					if (found) {
+						break;
 					}
 				}
 				if (found) {
@@ -282,32 +278,26 @@ public class PaintPane extends BorderPane {
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
 				}
+
 				redrawCanvas();
 			}
 		});
 
 
+
 		canvas.setOnMouseDragged(event -> {
 			if (selectionButton.isSelected() && selectedFigure != null) {
-				// Crear el nuevo punto basado en el evento del mouse
 				Point eventPoint = new Point(event.getX(), event.getY());
-
-				// Calcular las diferencias
 				double diffX = eventPoint.getX() - startPoint.getX();
 				double diffY = eventPoint.getY() - startPoint.getY();
 
-				// Obtener la DrawFigure asociadas a la figura seleccionada
 				DrawFigure df = drawFigures.get(selectedFigure);
 
 				if (df != null) {
-					// Mover la figura y sincronizar los datos
 					df.moveAndSync(diffX, diffY);
 				}
 
-				// Actualizar el punto inicial para el próximo evento de arrastre
 				startPoint = eventPoint;
-
-				// Redibujar el canvas
 				redrawCanvas();
 			}
 		});
@@ -329,7 +319,6 @@ public class PaintPane extends BorderPane {
 
 		fillColorPicker.setOnAction(event -> {
 			if (selectedFigure != null && selectionButton.isSelected()) {
-				// Actualiza el primer color en figureInfoMap
 				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 				figureInfo.setColor(fillColorPicker.getValue());
 				redrawCanvas();
@@ -338,7 +327,6 @@ public class PaintPane extends BorderPane {
 
 		secondFillColorPicker.setOnAction(event -> {
 			if (selectedFigure != null && selectionButton.isSelected()) {
-				// Actualiza el segundo color en figureInfoMap
 				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 				figureInfo.setSecondaryColor(secondFillColorPicker.getValue());
 				redrawCanvas();
@@ -400,13 +388,12 @@ public class PaintPane extends BorderPane {
 				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
 				if (biselado.isSelected()) {
 					if (!figureInfo.getArcType()) {
-						figureInfo.setArcType(); // Activar el biselado
+						figureInfo.setArcType();
 						redrawCanvas();
 					}
 				} else {
-					// Opcional: lógica para desactivar el efecto
 					if (figureInfo.getArcType()) {
-						figureInfo.setArcType(); // Desactivar el biselado
+						figureInfo.setArcType();
 						redrawCanvas();
 					}
 				}
@@ -428,7 +415,6 @@ public class PaintPane extends BorderPane {
 				DrawFigure drawable = drawFigures.get(selectedFigure);
 				if (drawable != null) {
 					drawable.rotateRight(info);
-					//canvasState.addFigure(drawable.getFigure());
 				}
 				redrawCanvas();
 			}
@@ -470,11 +456,12 @@ public class PaintPane extends BorderPane {
 
 				Figure duplicateFigure = figureToButtonMap.get(figure).create(newStartPoint, newEndPoint);
 
-				//duplico la info y pongo las nuevas coordenadas
-				FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(), originalInfo.getShadowType(), originalInfo.getArcType(), originalInfo.getRotate(), originalInfo.getFlipH(), originalInfo.getFlipV());
 
-				//creo la draw figure
-				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure,gc);
+				FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
+						originalInfo.getShadowType(), originalInfo.getArcType(), originalInfo.getRotate(),
+						originalInfo.getFlipH(), originalInfo.getFlipV());
+
+				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure);
 				figureInfoMap.put(duplicateFigure, duplicatedInfo);
 				drawFigures.put(duplicateFigure, duplicateDrawFig);
 				figureToButtonMap.putIfAbsent(duplicateFigure, figureToButtonMap.get(figure));
@@ -500,7 +487,6 @@ public class PaintPane extends BorderPane {
 
 				Point centrePoint = selectedFigure.getCenterPoint();
 
-				//creo la figura de la izq
 				Figure leftDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
 						new Point(xStartPoint,
 								yStartPoint + newHeight / 2),
@@ -509,9 +495,10 @@ public class PaintPane extends BorderPane {
 						new Point(centrePoint.getX() - newWidth/2, centrePoint.getY()),
 						newHeight, newWidth);
 
-				FigureInfo dividedInfoLeftFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(), info.getShadowType(), info.getArcType(), info.getRotate(), info.getFlipH(), info.getFlipV());
+				FigureInfo dividedInfoLeftFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
+						info.getShadowType(), info.getArcType(), info.getRotate(),
+						info.getFlipH(), info.getFlipV());
 
-				//creo la figura de la derecha
 				Figure rightDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
 						new Point(centrePoint.getX(),
 								yStartPoint + newHeight / 2),
@@ -520,14 +507,15 @@ public class PaintPane extends BorderPane {
 						new Point(centrePoint.getX() + newWidth/2, centrePoint.getY()),
 						newHeight, newWidth);
 
-				FigureInfo dividedInfoRightFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(), info.getShadowType(), info.getArcType(), info.getRotate(), info.getFlipH(), info.getFlipV());
+				FigureInfo dividedInfoRightFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
+						info.getShadowType(), info.getArcType(), info.getRotate(),
+						info.getFlipH(), info.getFlipV());
 
 
-				// agrego las figuras nuevas a los mapas
 				figureInfoMap.put(leftDividedFigure, dividedInfoLeftFigure);
 				figureInfoMap.put(rightDividedFigure, dividedInfoRightFigure);
-				drawFigures.put(leftDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoLeftFigure,leftDividedFigure, gc));
-				drawFigures.put(rightDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoRightFigure,rightDividedFigure, gc));
+				drawFigures.put(leftDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoLeftFigure,leftDividedFigure));
+				drawFigures.put(rightDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoRightFigure,rightDividedFigure));
 				figureToButtonMap.put(leftDividedFigure, figureToButtonMap.get(selectedFigure));
 				figureToButtonMap.put(rightDividedFigure, figureToButtonMap.get(selectedFigure));
 
