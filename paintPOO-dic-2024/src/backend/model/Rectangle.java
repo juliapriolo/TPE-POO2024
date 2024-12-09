@@ -70,6 +70,4 @@ public class Rectangle implements Figure {
         return eventPoint.getX() > topLeft.getX() && eventPoint.getX() < bottomRight.getX() &&
                 eventPoint.getY() > topLeft.getY() && eventPoint.getY() < bottomRight.getY();
     }
-
-
 }

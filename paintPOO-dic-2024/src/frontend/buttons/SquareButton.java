@@ -16,7 +16,7 @@ public class SquareButton extends RectangleButton{
 
     @Override
     public Figure createDividedFigure(Point startPoint, Point endPoint, Point centrePoint, double height, double width){
-        return new Square(startPoint, getSize(startPoint, endPoint));
+        return create(startPoint, endPoint);
     }
 
     private double getSize(Point startPoint, Point endPoint){
