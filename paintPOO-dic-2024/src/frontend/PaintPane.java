@@ -303,6 +303,8 @@ public class PaintPane extends BorderPane {
 				newButton = button;
 
 				figureToButtonMap.putIfAbsent(newFigure, newButton);
+				fillColorPicker.setValue(defaultFillColor);
+				secondFillColorPicker.setValue(defaultFillColor);
 				figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), defaultShadowType, defaultArcType, defaultRotate, defaultFlipH, defaultFlipV));
 				canvasState.addFigure(newFigure);
 				drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure), newFigure));
