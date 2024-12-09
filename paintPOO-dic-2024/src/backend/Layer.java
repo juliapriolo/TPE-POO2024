@@ -23,10 +23,6 @@ public class Layer implements Comparable<Layer> {
         visible = true;
     }
 
-    public int getLayerNumber(){
-        return layerNumber;
-    }
-
     public boolean getVisibility(){
         return visible;
     }
@@ -34,7 +30,6 @@ public class Layer implements Comparable<Layer> {
     public boolean canDelete(){
         return layerNumber > 3;
     }
-
 
     @Override
     public String toString() {

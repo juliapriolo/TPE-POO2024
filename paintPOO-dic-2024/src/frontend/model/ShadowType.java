@@ -77,5 +77,6 @@ public enum ShadowType {
     public Color getColor(Color color){
         return defaultColor;
     }
+
     public abstract double getOffSet();
 }

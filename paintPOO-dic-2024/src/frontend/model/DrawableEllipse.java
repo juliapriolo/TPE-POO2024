@@ -40,10 +40,6 @@ public class DrawableEllipse extends DrawFigure {
         gc.setLineWidth(1);
     }
 
-    public void moveAndSync(double deltaX, double deltaY) {
-        ellipse.move(deltaX, deltaY);
-    }
-
     private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor) {
         return new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
                 CycleMethod.NO_CYCLE,
@@ -69,20 +65,9 @@ public class DrawableEllipse extends DrawFigure {
     public void rotateRight(FigureInfo info) {
         if (info.getRotate()) {
             double tempAxis = getFigure().getWidth();
-            ellipse.setsMayorAxis(ellipse.getHeight());
-            ellipse.setsMinorAxis(tempAxis);
+            ellipse.setMajorAxis(ellipse.getHeight());
+            ellipse.setMinorAxis(tempAxis);
             info.setRotate(false);
-        }
-    }
-
-    private void customFlipEllipse(double deltaX, double deltaY, FigureInfo info, boolean isVertical) {
-        Point newCenter = new Point(ellipse.getCenterPoint().getX() + deltaX, ellipse.getCenterPoint().getY() + deltaY);
-        ellipse.setCenterPoint(newCenter);
-
-        if (isVertical) {
-            info.setFlipV(false);
-        } else {
-            info.setFlipH(false);
         }
     }
 
@@ -96,4 +81,14 @@ public class DrawableEllipse extends DrawFigure {
         customFlipEllipse(width, 0, info, false);
     }
 
+    private void customFlipEllipse(double deltaX, double deltaY, FigureInfo info, boolean isVertical) {
+        Point newCenter = new Point(ellipse.getCenterPoint().getX() + deltaX, ellipse.getCenterPoint().getY() + deltaY);
+        ellipse.setCenterPoint(newCenter);
+
+        if (isVertical) {
+            info.setFlipV(false);
+        } else {
+            info.setFlipH(false);
+        }
+    }
 }

@@ -11,21 +11,17 @@ public class Rectangle implements Figure {
         this.bottomRight = bottomRight;
     }
 
-    @Override
-    public double getWidth() {
-        return Math.abs(getStartPoint().getX() - getEndPoint().getX());
+    public void setStartPoint(Point startPoint) {
+        this.topLeft = startPoint;
     }
-
-    @Override
-    public double getHeight() {
-        return Math.abs(getStartPoint().getY() - getEndPoint().getY());
-    }
-
     @Override
     public Point getStartPoint() {
         return topLeft;
     }
 
+    public void setEndPoint(Point endPoint){
+        this.bottomRight = endPoint;
+    }
     @Override
     public Point getEndPoint() {
         return bottomRight;
@@ -36,17 +32,14 @@ public class Rectangle implements Figure {
         return new Point((getStartPoint().getX() + getEndPoint().getX()) / 2, (getStartPoint().getY() + getEndPoint().getY()) / 2);
     }
 
-    public void setStartPoint(Point startPoint) {
-        this.topLeft = startPoint;
-    }
-
-    public void setEndPoint(Point endPoint){
-        this.bottomRight = endPoint;
+    @Override
+    public double getWidth() {
+        return Math.abs(getStartPoint().getX() - getEndPoint().getX());
     }
 
     @Override
-    public String toString() {
-        return String.format("Rectángulo [ %s , %s ]", topLeft, bottomRight);
+    public double getHeight() {
+        return Math.abs(getStartPoint().getY() - getEndPoint().getY());
     }
 
     @Override
@@ -62,5 +55,8 @@ public class Rectangle implements Figure {
                 eventPoint.getY() > topLeft.getY() && eventPoint.getY() < bottomRight.getY();
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("Rectángulo [ %s , %s ]", topLeft, bottomRight);
+    }
 }

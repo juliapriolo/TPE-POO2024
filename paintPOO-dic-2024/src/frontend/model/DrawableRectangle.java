@@ -39,10 +39,6 @@ public class DrawableRectangle extends DrawFigure {
         gc.setLineWidth(1);
     }
 
-    public void moveAndSync(double deltaX, double deltaY) {
-        rectangle.move(deltaX, deltaY);
-    }
-
     private LinearGradient getGradientColor(Color firstFillColor, Color secondFillColor) {
         return new LinearGradient(0, 0, 1, 0, true,
                 CycleMethod.NO_CYCLE,
@@ -84,24 +80,6 @@ public class DrawableRectangle extends DrawFigure {
         }
     }
 
-    public void updateInfo(Point newStartPoint, Point newEndPoint) {
-        rectangle.setStartPoint(newStartPoint);
-        rectangle.setEndPoint(newEndPoint);
-    }
-
-    public void customFlipRect(double deltaX, double deltaY, FigureInfo info, boolean isVertical){
-        Point newTopLeft = new Point(rectangle.getStartPoint().getX() + deltaX, rectangle.getStartPoint().getY() + deltaY);
-        Point newBottomRight = new Point(rectangle.getEndPoint().getX() + deltaX, rectangle.getEndPoint().getY() + deltaY);
-
-        updateInfo(newTopLeft, newBottomRight);
-
-        if(isVertical){
-            info.setFlipV(false);
-        }else{
-            info.setFlipH(false);
-        }
-    }
-
     public void flipVertically(FigureInfo info) {
         double height = rectangle.getHeight();
 
@@ -114,5 +92,21 @@ public class DrawableRectangle extends DrawFigure {
         customFlipRect(width, 0, info, false);
     }
 
+    private void customFlipRect(double deltaX, double deltaY, FigureInfo info, boolean isVertical){
+        Point newTopLeft = new Point(rectangle.getStartPoint().getX() + deltaX, rectangle.getStartPoint().getY() + deltaY);
+        Point newBottomRight = new Point(rectangle.getEndPoint().getX() + deltaX, rectangle.getEndPoint().getY() + deltaY);
 
+        updateInfo(newTopLeft, newBottomRight);
+
+        if(isVertical){
+            info.setFlipV(false);
+        }else{
+            info.setFlipH(false);
+        }
+    }
+
+    private void updateInfo(Point newStartPoint, Point newEndPoint) {
+        rectangle.setStartPoint(newStartPoint);
+        rectangle.setEndPoint(newEndPoint);
+    }
 }

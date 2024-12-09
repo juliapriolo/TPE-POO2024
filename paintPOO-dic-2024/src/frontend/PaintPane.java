@@ -14,6 +14,7 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -23,11 +24,11 @@ import java.util.*;
 
 public class PaintPane extends BorderPane {
 
-	private CanvasState canvasState;
+	private final CanvasState canvasState;
 
 	// Canvas y relacionados
 	private final Canvas canvas = new Canvas(800, 600);
-	private GraphicsContext gc = canvas.getGraphicsContext2D();
+	private final GraphicsContext gc = canvas.getGraphicsContext2D();
 	private final Color lineColor = Color.BLACK;
 	private final Color defaultFillColor = Color.YELLOW;
 	private final ShadowType defaultShadowType = ShadowType.NONE;
@@ -184,180 +185,29 @@ public class PaintPane extends BorderPane {
 		});
 
 
-		canvas.setOnMouseReleased(event -> {
-			Point endPoint = new Point(event.getX(), event.getY());
-			if(startPoint == null || endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
-				return ;
-			}
+		canvas.setOnMouseReleased(event -> setOnMouseReleasedMethod(event));
 
-			Figure newFigure = null;
-			FigureButton newButton = null;
+		canvas.setOnMouseMoved(event -> setOnMouseMovedMethod(event));
 
-			for(FigureButton button : figureButtons) {
-				if(button.isSelected() ) {
-					newFigure = button.create(startPoint, endPoint);
-					newButton = button;
+		canvas.setOnMouseClicked(event -> setOnMouseClickedMethod(event));
 
-					figureToButtonMap.putIfAbsent(newFigure, newButton);
-					figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), defaultShadowType, defaultArcType, defaultRotate, defaultFlipH, defaultFlipV));
-					canvasState.addFigure(newFigure);
-					drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure), newFigure));
-					layersMap.get(currentLayer).add(newFigure);
-					biselado.setSelected(false);
-					startPoint = null;
+		canvas.setOnMouseDragged(event -> setOnMouseDraggedMethod(event));
 
-					redrawCanvas();
-				}
-			}
-		});
+		deleteButton.setOnAction(event -> deleteButtonMethod());
 
-
-		canvas.setOnMouseMoved(event -> {
-			Point eventPoint = new Point(event.getX(), event.getY());
-			boolean found = false;
-			StringBuilder label = new StringBuilder();
-			List<Map.Entry<Layer, List<Figure>>> layersList = new ArrayList<>(layersMap.entrySet());
-			Collections.reverse(layersList);
-
-			for (Map.Entry<Layer, List<Figure>> entry : layersList) {
-				Layer layer = entry.getKey();
-				if (layer.getVisibility()) {
-					List<Figure> figures = entry.getValue();
-					for (int i = figures.size() - 1; i >= 0; i--) {
-						Figure figure = figures.get(i);
-						if (figureBelongs(figure, eventPoint)) {
-							found = true;
-							label = new StringBuilder(figure.toString());
-							break;
-						}
-					}
-				}
-				if (found) {
-					break;
-				}
-			}
-			if (found) {
-				statusPane.updateStatus(label.toString());
-			} else {
-				statusPane.updateStatus(eventPoint.toString());
-			}
-		});
-
-		canvas.setOnMouseClicked(event -> {
-			Point eventPoint = new Point(event.getX(), event.getY());
-			boolean found = false;
-			StringBuilder label = new StringBuilder("Se seleccionó: ");
-
-			if (selectionButton.isSelected()) {
-				for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
-					Layer layer = entry.getKey();
-					if (layer.getVisibility()) {
-						List<Figure> figures = entry.getValue();
-						for (int i = figures.size() - 1; i >= 0; i--) {
-							Figure figure = figures.get(i);
-							if (figureBelongs(figure, eventPoint)) {
-								if (initializedCopyFormatButton && selectedFigure != null) {
-									FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
-									FigureInfo destinyFigureInfo = figureInfoMap.get(figure);
-									destinyFigureInfo.setColor(originFigureInfo.getColor());
-									destinyFigureInfo.setSecondaryColor(originFigureInfo.getSecondaryColor());
-									destinyFigureInfo.setShadowType(originFigureInfo.getShadowType());
-									destinyFigureInfo.transferArcType(originFigureInfo.getArcType());
-									initializedCopyFormatButton = false;
-								}
-								found = true;
-								selectedFigure = figure;
-								fillColorPicker.setValue(figureInfoMap.get(selectedFigure).getColor());
-								secondFillColorPicker.setValue(figureInfoMap.get(selectedFigure).getSecondaryColor());
-								shadowsChoiceBox.setValue(figureInfoMap.get(selectedFigure).getShadowType());
-								biselado.setSelected(figureInfoMap.get(selectedFigure).getArcType());
-								label.append(figure.toString());
-								break;
-							}
-						}
-					}
-					if (found) {
-						break;
-					}
-				}
-				if (found) {
-					statusPane.updateStatus(label.toString());
-				} else {
-					selectedFigure = null;
-					statusPane.updateStatus("Ninguna figura encontrada");
-				}
-
-				redrawCanvas();
-			}
-		});
-
-
-		canvas.setOnMouseDragged(event -> {
-			if (selectionButton.isSelected() && selectedFigure != null) {
-				Point eventPoint = new Point(event.getX(), event.getY());
-				double diffX = eventPoint.getX() - startPoint.getX();
-				double diffY = eventPoint.getY() - startPoint.getY();
-
-				DrawFigure df = drawFigures.get(selectedFigure);
-
-				if (df != null) {
-					df.moveAndSync(diffX, diffY);
-				}
-
-				startPoint = eventPoint;
-				redrawCanvas();
-			}
-		});
-
-
-		deleteButton.setOnAction(event -> {
-			if (selectedFigure != null) {
-				layersMap.get(currentLayer).remove(selectedFigure);
-				canvasState.deleteFigure(selectedFigure);
-				selectedFigure = null;
-				redrawCanvas();
-			}
-		});
 
 		setLeft(buttonsBox);
 		setRight(rightButtons);
 		setCenter(canvas);
 		setTop(layersButtons);
 
-		fillColorPicker.setOnAction(event -> {
-			if (selectedFigure != null && selectionButton.isSelected()) {
-				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
-				figureInfo.setColor(fillColorPicker.getValue());
-				redrawCanvas();
-			}
-		});
+		fillColorPicker.setOnAction(event -> fillColorPickerMethod());
 
-		secondFillColorPicker.setOnAction(event -> {
-			if (selectedFigure != null && selectionButton.isSelected()) {
-				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
-				figureInfo.setSecondaryColor(secondFillColorPicker.getValue());
-				redrawCanvas();
-			}
-		});
+		secondFillColorPicker.setOnAction(event -> secondFillColorPickerMethod());
 
-		shadowsChoiceBox.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
-				figureInfo.setShadowType(shadowsChoiceBox.getValue());
-				redrawCanvas();
-			}
-		});
+		shadowsChoiceBox.setOnAction(event -> shadowsChoiceBoxMethod());
 
-		layersChoiceBox.setOnAction(event -> {
-			currentLayer = layersChoiceBox.getValue();
-			selectedFigure = null;
-			if(currentLayer.getVisibility()){
-				showLayer.fire();
-			} else{
-				hideLayer.fire();
-			}
-			redrawCanvas();
-		});
+		layersChoiceBox.setOnAction(event -> layersChoiceBoxMethod());
 
 		showLayer.setOnAction(event -> {
 			layersChoiceBox.getValue().unHide();
@@ -379,34 +229,9 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		addLayer.setOnAction(event -> {
-			int newLayerNumber = canvasState.getLastLayerAndIncrement();
-			Layer newLayer = new Layer(newLayerNumber);
-			layersMap.put(newLayer, new ArrayList<>());
-			layersChoiceBox.getItems().add(newLayer);
-			currentLayer = newLayer;
-			layersChoiceBox.setValue(currentLayer);
-			showLayer.setSelected(true);
-			redrawCanvas();
-		});
+		addLayer.setOnAction(event -> addLayerMethod());
 
-		biselado.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
-				if (biselado.isSelected()) {
-					if (!figureInfo.getArcType()) {
-						figureInfo.setArcType();
-						redrawCanvas();
-					}
-				} else {
-					if (figureInfo.getArcType()) {
-						figureInfo.setArcType();
-						redrawCanvas();
-					}
-				}
-
-			}
-		});
+		biselado.setOnAction(event -> biseladoMethod());
 
 		copyFormatButton.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
@@ -415,133 +240,15 @@ public class PaintPane extends BorderPane {
 			redrawCanvas();
 		});
 
-		turnRightButton.setOnAction((event -> {
-			if (selectedFigure != null && selectionButton.isSelected()) {
-				FigureInfo info = figureInfoMap.get(selectedFigure);
-				info.setRotate();
+		turnRightButton.setOnAction(event -> turnRightMethod());
 
-				DrawFigure drawable = drawFigures.get(selectedFigure);
-				if (drawable != null) {
-					drawable.rotateRight(info);
-				}
-				redrawCanvas();
-			}
-		}));
+		flipHorizontally.setOnAction(event -> flipHMethod());
 
-		flipHorizontally.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				FigureInfo info = figureInfoMap.get(selectedFigure);
-				info.setFlipH();
+		flipVertically.setOnAction(event -> flipVMethod());
 
-				DrawFigure df = drawFigures.get(selectedFigure);
-				if(df != null){
-					df.flipHorizontally(info);
-				}
-				redrawCanvas();
-			}
-		});
+		duplicate.setOnAction(event -> duplicateMethod());
 
-		flipVertically.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				FigureInfo info = figureInfoMap.get(selectedFigure);
-				info.setFlipV();
-
-				DrawFigure df = drawFigures.get(selectedFigure);
-				if(df != null){
-					df.flipVertically(info);
-				}
-				redrawCanvas();
-			}
-		});
-
-		duplicate.setOnAction((event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				Figure figure = selectedFigure;
-				FigureInfo originalInfo = figureInfoMap.get(figure);
-
-				Point newStartPoint = new Point(figure.getStartPoint().getX() + offset, figure.getStartPoint().getY() + offset);
-				Point newEndPoint = new Point(figure.getEndPoint().getX() + offset, figure.getEndPoint().getY() + offset);
-
-				Figure duplicateFigure = figureToButtonMap.get(figure).create(newStartPoint, newEndPoint);
-
-
-				FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
-						originalInfo.getShadowType(), originalInfo.getArcType(), originalInfo.getRotate(),
-						originalInfo.getFlipH(), originalInfo.getFlipV());
-
-				DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure);
-				figureInfoMap.put(duplicateFigure, duplicatedInfo);
-				drawFigures.put(duplicateFigure, duplicateDrawFig);
-				figureToButtonMap.putIfAbsent(duplicateFigure, figureToButtonMap.get(figure));
-				selectedFigure = null;
-				canvasState.addFigure(duplicateFigure);
-				layersMap.get(currentLayer).add(duplicateFigure);
-				redrawCanvas();
-
-			}}));
-
-		divide.setOnAction(event -> {
-			if(selectedFigure != null && selectionButton.isSelected()){
-				FigureInfo info = figureInfoMap.get(selectedFigure);
-
-				double newHeight = selectedFigure.getHeight()/2;
-				double newWidth = selectedFigure.getWidth()/2;
-
-				double xStartPoint = selectedFigure.getStartPoint().getX();
-				double yStartPoint = selectedFigure.getStartPoint().getY();
-
-				double xEndPoint = selectedFigure.getEndPoint().getX();
-				double yEndPoint = selectedFigure.getEndPoint().getY();
-
-				Point centrePoint = selectedFigure.getCenterPoint();
-
-				Figure leftDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
-						new Point(xStartPoint,
-								yStartPoint + newHeight / 2),
-						new Point (centrePoint.getX(),
-								yEndPoint - newHeight/ 2),
-						new Point(centrePoint.getX() - newWidth/2, centrePoint.getY()),
-						newHeight, newWidth);
-
-				FigureInfo dividedInfoLeftFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
-						info.getShadowType(), info.getArcType(), info.getRotate(),
-						info.getFlipH(), info.getFlipV());
-
-				Figure rightDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
-						new Point(centrePoint.getX(),
-								yStartPoint + newHeight / 2),
-						new Point(xEndPoint,
-								yEndPoint - newHeight / 2),
-						new Point(centrePoint.getX() + newWidth/2, centrePoint.getY()),
-						newHeight, newWidth);
-
-				FigureInfo dividedInfoRightFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
-						info.getShadowType(), info.getArcType(), info.getRotate(),
-						info.getFlipH(), info.getFlipV());
-
-
-				figureInfoMap.put(leftDividedFigure, dividedInfoLeftFigure);
-				figureInfoMap.put(rightDividedFigure, dividedInfoRightFigure);
-				drawFigures.put(leftDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoLeftFigure,leftDividedFigure));
-				drawFigures.put(rightDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoRightFigure,rightDividedFigure));
-				figureToButtonMap.put(leftDividedFigure, figureToButtonMap.get(selectedFigure));
-				figureToButtonMap.put(rightDividedFigure, figureToButtonMap.get(selectedFigure));
-
-				canvasState.deleteFigure(selectedFigure);
-				layersMap.get(currentLayer).remove(selectedFigure);
-				figureInfoMap.remove(selectedFigure);
-				drawFigures.remove(selectedFigure);
-
-				selectedFigure = null;
-
-				canvasState.addFigure(rightDividedFigure);
-				canvasState.addFigure(leftDividedFigure);
-				layersMap.get(currentLayer).add(rightDividedFigure);
-				layersMap.get(currentLayer).add(leftDividedFigure);
-
-				redrawCanvas();
-			}
-		});
+		divide.setOnAction(event -> divideMethod());
 
 		bringToFrontButton.setOnAction(event -> {
 			if(selectedFigure != null && selectionButton.isSelected()){
@@ -577,9 +284,327 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
-
-	boolean figureBelongs(Figure figure, Point eventPoint) {
+	private boolean figureBelongs(Figure figure, Point eventPoint) {
 		return figure.contains(eventPoint);
 	}
 
+	private void setOnMouseReleasedMethod(MouseEvent event) {
+		Point endPoint = new Point(event.getX(), event.getY());
+		if(startPoint == null || endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
+			return ;
+		}
+
+		Figure newFigure = null;
+		FigureButton newButton = null;
+
+		for(FigureButton button : figureButtons) {
+			if(button.isSelected() ) {
+				newFigure = button.create(startPoint, endPoint);
+				newButton = button;
+
+				figureToButtonMap.putIfAbsent(newFigure, newButton);
+				figureInfoMap.put(newFigure, new FigureInfo(fillColorPicker.getValue(), secondFillColorPicker.getValue(), defaultShadowType, defaultArcType, defaultRotate, defaultFlipH, defaultFlipV));
+				canvasState.addFigure(newFigure);
+				drawFigures.putIfAbsent(newFigure, newButton.createDrawFigure(figureInfoMap.get(newFigure), newFigure));
+				layersMap.get(currentLayer).add(newFigure);
+				biselado.setSelected(defaultArcType);
+				shadowsChoiceBox.setValue(defaultShadowType);
+				startPoint = null;
+
+				redrawCanvas();
+			}
+		}
+	}
+
+	private void setOnMouseMovedMethod(MouseEvent event) {
+		Point eventPoint = new Point(event.getX(), event.getY());
+		boolean found = false;
+		StringBuilder label = new StringBuilder();
+		List<Map.Entry<Layer, List<Figure>>> layersList = new ArrayList<>(layersMap.entrySet());
+		Collections.reverse(layersList);
+
+		for (Map.Entry<Layer, List<Figure>> entry : layersList) {
+			Layer layer = entry.getKey();
+			if (layer.getVisibility()) {
+				List<Figure> figures = entry.getValue();
+				for (int i = figures.size() - 1; i >= 0; i--) {
+					Figure figure = figures.get(i);
+					if (figureBelongs(figure, eventPoint)) {
+						found = true;
+						label = new StringBuilder(figure.toString());
+						break;
+					}
+				}
+			}
+			if (found) {
+				break;
+			}
+		}
+		if (found) {
+			statusPane.updateStatus(label.toString());
+		} else {
+			statusPane.updateStatus(eventPoint.toString());
+		}
+	}
+
+	private void setOnMouseClickedMethod(MouseEvent event) {
+		Point eventPoint = new Point(event.getX(), event.getY());
+		boolean found = false;
+		StringBuilder label = new StringBuilder("Se seleccionó: ");
+
+		if (selectionButton.isSelected()) {
+			for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
+				Layer layer = entry.getKey();
+				if (layer.getVisibility()) {
+					List<Figure> figures = entry.getValue();
+					for (int i = figures.size() - 1; i >= 0; i--) {
+						Figure figure = figures.get(i);
+						if (figureBelongs(figure, eventPoint)) {
+							if (initializedCopyFormatButton && selectedFigure != null) {
+								FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
+								FigureInfo destinyFigureInfo = figureInfoMap.get(figure);
+								destinyFigureInfo.setColor(originFigureInfo.getColor());
+								destinyFigureInfo.setSecondaryColor(originFigureInfo.getSecondaryColor());
+								destinyFigureInfo.setShadowType(originFigureInfo.getShadowType());
+								destinyFigureInfo.transferArcType(originFigureInfo.getArcType());
+								initializedCopyFormatButton = false;
+							}
+							found = true;
+							selectedFigure = figure;
+							fillColorPicker.setValue(figureInfoMap.get(selectedFigure).getColor());
+							secondFillColorPicker.setValue(figureInfoMap.get(selectedFigure).getSecondaryColor());
+							shadowsChoiceBox.setValue(figureInfoMap.get(selectedFigure).getShadowType());
+							biselado.setSelected(figureInfoMap.get(selectedFigure).getArcType());
+							label.append(figure.toString());
+							break;
+						}
+					}
+				}
+				if (found) {
+					break;
+				}
+			}
+			if (found) {
+				statusPane.updateStatus(label.toString());
+			} else {
+				selectedFigure = null;
+				statusPane.updateStatus("Ninguna figura encontrada");
+			}
+
+			redrawCanvas();
+		}
+	}
+
+	private void setOnMouseDraggedMethod(MouseEvent event) {
+		if (selectionButton.isSelected() && selectedFigure != null) {
+			Point eventPoint = new Point(event.getX(), event.getY());
+			double diffX = eventPoint.getX() - startPoint.getX();
+			double diffY = eventPoint.getY() - startPoint.getY();
+
+			selectedFigure.move(diffX, diffY);
+
+			startPoint = eventPoint;
+			redrawCanvas();
+		}
+	}
+
+	private void deleteButtonMethod(){
+		if (selectedFigure != null) {
+			layersMap.get(currentLayer).remove(selectedFigure);
+			canvasState.deleteFigure(selectedFigure);
+			selectedFigure = null;
+			redrawCanvas();
+		}
+	}
+
+	private void fillColorPickerMethod(){
+		if (selectedFigure != null && selectionButton.isSelected()) {
+			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+			figureInfo.setColor(fillColorPicker.getValue());
+			redrawCanvas();
+		}
+	}
+
+	private void secondFillColorPickerMethod(){
+		if (selectedFigure != null && selectionButton.isSelected()) {
+			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+			figureInfo.setSecondaryColor(secondFillColorPicker.getValue());
+			redrawCanvas();
+		}
+	}
+
+	private void shadowsChoiceBoxMethod(){
+		if(selectedFigure != null && selectionButton.isSelected()){
+			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+			figureInfo.setShadowType(shadowsChoiceBox.getValue());
+			redrawCanvas();
+		}
+	}
+
+	private void layersChoiceBoxMethod(){
+		currentLayer = layersChoiceBox.getValue();
+		selectedFigure = null;
+		if(currentLayer.getVisibility()){
+			showLayer.fire();
+		} else{
+			hideLayer.fire();
+		}
+		redrawCanvas();
+	}
+
+	private void addLayerMethod(){
+		int newLayerNumber = canvasState.getLastLayerAndIncrement();
+		Layer newLayer = new Layer(newLayerNumber);
+		layersMap.put(newLayer, new ArrayList<>());
+		layersChoiceBox.getItems().add(newLayer);
+		currentLayer = newLayer;
+		layersChoiceBox.setValue(currentLayer);
+		showLayer.setSelected(true);
+		redrawCanvas();
+	}
+
+	private void biseladoMethod(){
+		if(selectedFigure != null && selectionButton.isSelected()){
+			FigureInfo figureInfo = figureInfoMap.get(selectedFigure);
+			if (biselado.isSelected()) {
+				if (!figureInfo.getArcType()) {
+					figureInfo.setArcType();
+					redrawCanvas();
+				}
+			} else {
+				if (figureInfo.getArcType()) {
+					figureInfo.setArcType();
+					redrawCanvas();
+				}
+			}
+		}
+	}
+
+	private void turnRightMethod(){
+		if (selectedFigure != null && selectionButton.isSelected()) {
+			FigureInfo info = figureInfoMap.get(selectedFigure);
+			info.setRotate();
+
+			DrawFigure drawable = drawFigures.get(selectedFigure);
+			if (drawable != null) {
+				drawable.rotateRight(info);
+			}
+			redrawCanvas();
+		}
+	}
+
+	private void flipHMethod(){
+		if(selectedFigure != null && selectionButton.isSelected()){
+			FigureInfo info = figureInfoMap.get(selectedFigure);
+			info.setFlipH();
+
+			DrawFigure df = drawFigures.get(selectedFigure);
+			if(df != null){
+				df.flipHorizontally(info);
+			}
+			redrawCanvas();
+		}
+	}
+
+	private void flipVMethod(){
+		if(selectedFigure != null && selectionButton.isSelected()){
+			FigureInfo info = figureInfoMap.get(selectedFigure);
+			info.setFlipV();
+
+			DrawFigure df = drawFigures.get(selectedFigure);
+			if(df != null){
+				df.flipVertically(info);
+			}
+			redrawCanvas();
+		}
+	}
+
+	private void duplicateMethod(){
+		if(selectedFigure != null && selectionButton.isSelected()){
+			Figure figure = selectedFigure;
+			FigureInfo originalInfo = figureInfoMap.get(figure);
+
+			Point newStartPoint = new Point(figure.getStartPoint().getX() + offset, figure.getStartPoint().getY() + offset);
+			Point newEndPoint = new Point(figure.getEndPoint().getX() + offset, figure.getEndPoint().getY() + offset);
+
+			Figure duplicateFigure = figureToButtonMap.get(figure).create(newStartPoint, newEndPoint);
+
+
+			FigureInfo duplicatedInfo = new FigureInfo(originalInfo.getColor(), originalInfo.getSecondaryColor(),
+					originalInfo.getShadowType(), originalInfo.getArcType(), originalInfo.getRotate(),
+					originalInfo.getFlipH(), originalInfo.getFlipV());
+
+			DrawFigure duplicateDrawFig = figureToButtonMap.get(selectedFigure).createDrawFigure(duplicatedInfo,duplicateFigure);
+			figureInfoMap.put(duplicateFigure, duplicatedInfo);
+			drawFigures.put(duplicateFigure, duplicateDrawFig);
+			figureToButtonMap.putIfAbsent(duplicateFigure, figureToButtonMap.get(figure));
+			selectedFigure = null;
+			canvasState.addFigure(duplicateFigure);
+			layersMap.get(currentLayer).add(duplicateFigure);
+			redrawCanvas();
+		}
+	}
+
+	private void divideMethod(){
+		if(selectedFigure != null && selectionButton.isSelected()){
+			FigureInfo info = figureInfoMap.get(selectedFigure);
+
+			double newHeight = selectedFigure.getHeight()/2;
+			double newWidth = selectedFigure.getWidth()/2;
+
+			double xStartPoint = selectedFigure.getStartPoint().getX();
+			double yStartPoint = selectedFigure.getStartPoint().getY();
+
+			double xEndPoint = selectedFigure.getEndPoint().getX();
+			double yEndPoint = selectedFigure.getEndPoint().getY();
+
+			Point centrePoint = selectedFigure.getCenterPoint();
+
+			Figure leftDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
+					new Point(xStartPoint,
+							yStartPoint + newHeight / 2),
+					new Point (centrePoint.getX(),
+							yEndPoint - newHeight/ 2),
+					new Point(centrePoint.getX() - newWidth/2, centrePoint.getY()),
+					newHeight, newWidth);
+
+			FigureInfo dividedInfoLeftFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
+					info.getShadowType(), info.getArcType(), info.getRotate(),
+					info.getFlipH(), info.getFlipV());
+
+			Figure rightDividedFigure = figureToButtonMap.get(selectedFigure).createDividedFigure(
+					new Point(centrePoint.getX(),
+							yStartPoint + newHeight / 2),
+					new Point(xEndPoint,
+							yEndPoint - newHeight / 2),
+					new Point(centrePoint.getX() + newWidth/2, centrePoint.getY()),
+					newHeight, newWidth);
+
+			FigureInfo dividedInfoRightFigure = new FigureInfo(info.getColor(), info.getSecondaryColor(),
+					info.getShadowType(), info.getArcType(), info.getRotate(),
+					info.getFlipH(), info.getFlipV());
+
+
+			figureInfoMap.put(leftDividedFigure, dividedInfoLeftFigure);
+			figureInfoMap.put(rightDividedFigure, dividedInfoRightFigure);
+			drawFigures.put(leftDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoLeftFigure,leftDividedFigure));
+			drawFigures.put(rightDividedFigure, figureToButtonMap.get(selectedFigure).createDrawFigure(dividedInfoRightFigure,rightDividedFigure));
+			figureToButtonMap.put(leftDividedFigure, figureToButtonMap.get(selectedFigure));
+			figureToButtonMap.put(rightDividedFigure, figureToButtonMap.get(selectedFigure));
+
+			canvasState.deleteFigure(selectedFigure);
+			layersMap.get(currentLayer).remove(selectedFigure);
+			figureInfoMap.remove(selectedFigure);
+			drawFigures.remove(selectedFigure);
+
+			selectedFigure = null;
+
+			canvasState.addFigure(rightDividedFigure);
+			canvasState.addFigure(leftDividedFigure);
+			layersMap.get(currentLayer).add(rightDividedFigure);
+			layersMap.get(currentLayer).add(leftDividedFigure);
+
+			redrawCanvas();
+		}
+	}
 }

@@ -11,7 +11,6 @@ public abstract class DrawFigure {
 
     private final Figure figure;
 
-
     public DrawFigure(FigureInfo info,Figure figure) {
         this.figure = figure;
         this.info = info;
@@ -24,8 +23,6 @@ public abstract class DrawFigure {
     public abstract void flipHorizontally(FigureInfo info);
 
     public abstract void flipVertically(FigureInfo info);
-
-    public abstract void moveAndSync(double deltaX, double deltaY);
 
 
     public void setShadowOval(GraphicsContext gc, Point centerPoint, double sMinorAxis, double sMayorAxis){

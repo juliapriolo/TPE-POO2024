@@ -22,75 +22,65 @@ public class FigureInfo {
         this.flipH = flipH;
         this.flipV = flipV;
     }
-
-    public boolean getArcType(){
-        return arcType;
+    public void setColor(Color color) {
+        this.color = color;
+    }
+    public Color getColor() {
+        return color;
     }
 
-    public void transferArcType(boolean arcType){
-        this.arcType = arcType;
+    public void setSecondaryColor(Color secondaryColor) {
+        this.secondaryColor = secondaryColor;
     }
-
-    public void setArcType(){
-        arcType = !arcType;
-    }
-
-    public boolean getRotate(){
-        return rotateRight;
-    }
-
-    public void setRotate(boolean rotateRight) {
-        this.rotateRight = rotateRight;
-    }
-
-    public void setRotate() {this.rotateRight = true;}
-
-    public boolean getFlipH(){
-        return flipH;
-    }
-
-    public void setFlipH(){
-        this.flipH = true;
-    }
-
-    public void setFlipH(boolean flipH){
-        this.flipH = flipH;
-    }
-
-    public boolean getFlipV(){
-        return flipV;
-    }
-
-    public void setFlipV(){
-        flipV = true;
-    }
-
-    public void setFlipV(boolean flipV){
-        this.flipV = flipV;
-    }
-
-    public ShadowType getShadowType() {
-        return shadowType;
+    public Color getSecondaryColor() {
+        return secondaryColor;
     }
 
     public void setShadowType(ShadowType shadowType) {
         this.shadowType = shadowType;
     }
-
-    public Color getColor() {
-        return color;
+    public ShadowType getShadowType() {
+        return shadowType;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void transferArcType(boolean arcType){
+        this.arcType = arcType;
+    }
+    public void setArcType(){
+        arcType = !arcType;
+    }
+    public boolean getArcType(){
+        return arcType;
     }
 
-    public Color getSecondaryColor() {
-        return secondaryColor;
+    public void setRotate(boolean rotateRight) {
+        this.rotateRight = rotateRight;
+    }
+    public void setRotate() {
+        this.rotateRight = true;
+    }
+    public boolean getRotate(){
+        return rotateRight;
     }
 
-    public void setSecondaryColor(Color secondaryColor) {
-        this.secondaryColor = secondaryColor;
+    public void setFlipH(boolean flipH){
+        this.flipH = flipH;
+    }
+    public void setFlipH(){
+        this.flipH = true;
+    }
+    public boolean getFlipH(){
+        return flipH;
+    }
+
+    public void setFlipV(boolean flipV){
+        this.flipV = flipV;
+    }
+    public void setFlipV(){
+        flipV = true;
+    }
+    public boolean getFlipV(){
+        return flipV;
     }
 
 }

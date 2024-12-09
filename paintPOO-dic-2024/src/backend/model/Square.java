@@ -12,18 +12,4 @@ public class Square extends Rectangle {
         return String.format("Cuadrado [ %s , %s ]", getStartPoint(), getEndPoint());
     }
 
-    @Override
-    public double getWidth(){
-        return getSide(getStartPoint(), getEndPoint());
-    }
-
-    @Override
-    public double getHeight(){
-        return getSide(getStartPoint(), getEndPoint());
-    }
-
-    private double getSide(Point topLeft, Point bottomRight) {
-        return Math.abs(topLeft.getX() - bottomRight.getX());
-    }
-
 }
