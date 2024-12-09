@@ -17,6 +17,16 @@ public class Rectangle implements Figure {
     }
 
     @Override
+    public Point getStartPoint() {
+        return topLeft;
+    }
+
+    @Override
+    public Point getEndPoint() {
+        return bottomRight;
+    }
+
+    @Override
     public double getHeight() {
         return Math.abs(getTopLeft().getY() - getBottomRight().getY());
     }

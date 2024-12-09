@@ -31,6 +31,16 @@ public class Ellipse implements Figure {
     }
 
     @Override
+    public Point getStartPoint() {
+        return centerPoint;
+    }
+
+    @Override
+    public Point getEndPoint() {
+        return new Point(centerPoint.getX() + getWidth()/2, centerPoint.getY());
+    }
+
+    @Override
     public String toString() {
         return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", centerPoint, sMayorAxis, sMinorAxis);
     }

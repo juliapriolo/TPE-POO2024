@@ -505,9 +505,10 @@ public class PaintPane extends BorderPane {
 
 		divide.setOnAction(event -> {
 			if (selectedFigure != null && selectionButton.isSelected()) {
-				FigureInfo selectedFigureInfo = figureInfoMap.get(selectedFigure);
+				Figure figure = selectedFigure;
+				FigureInfo selectedFigureInfo = figureInfoMap.get(figure);
 
-				DrawFigure selectedDrawable = drawFigures.get(selectedFigure);
+				DrawFigure selectedDrawable = drawFigures.get(figure);
 
 				// Si el Drawable es nulo, no podemos dividir la figura
 				if (selectedDrawable != null) {
@@ -516,17 +517,50 @@ public class PaintPane extends BorderPane {
 					DrawFigure dividedFigure1 = dividedFigures[0];
 					DrawFigure dividedFigure2 = dividedFigures[1];
 
+
 					Figure dividedFigure1Obj = dividedFigure1.getFigure();
 					Figure dividedFigure2Obj = dividedFigure2.getFigure();
 
-					figureInfoMap.put(dividedFigure1Obj, selectedFigureInfo);
-					figureInfoMap.put(dividedFigure2Obj, selectedFigureInfo);
 
-					drawFigures.put(dividedFigure1Obj, dividedFigure1);
-					drawFigures.put(dividedFigure2Obj, dividedFigure2);
+					// Crear nuevas instancias de FigureInfo manualmente
+					FigureInfo dividedFigure1Info = new FigureInfo(
+							selectedFigureInfo.getColor(),
+							selectedFigureInfo.getSecondaryColor(),
+							dividedFigure1Obj.getStartPoint(),
+							dividedFigure1Obj.getEndPoint(),
+							selectedFigureInfo.getShadowType(),
+							selectedFigureInfo.getArcType(),
+							selectedFigureInfo.getRotate(),
+							selectedFigureInfo.getFlipH(),
+							selectedFigureInfo.getFlipV()
+					);
 
-					figureToButtonMap.putIfAbsent(dividedFigure1Obj, figureToButtonMap.get(selectedFigure));
-					figureToButtonMap.putIfAbsent(dividedFigure2Obj, figureToButtonMap.get(selectedFigure));
+					DrawFigure div1Fig = figureToButtonMap.get(selectedFigure).createDrawFigure(dividedFigure1Info, dividedFigure1Obj, gc);
+
+
+					FigureInfo dividedFigure2Info = new FigureInfo(
+							selectedFigureInfo.getColor(),
+							selectedFigureInfo.getSecondaryColor(),
+							selectedFigureInfo.getStartPoint(),
+							selectedFigureInfo.getEndPoint(),
+							selectedFigureInfo.getShadowType(),
+							selectedFigureInfo.getArcType(),
+							selectedFigureInfo.getRotate(),
+							selectedFigureInfo.getFlipH(),
+							selectedFigureInfo.getFlipV()
+					);
+
+					DrawFigure div2Fig = figureToButtonMap.get(selectedFigure).createDrawFigure(dividedFigure2Info, dividedFigure2Obj, gc);
+
+
+					figureInfoMap.put(dividedFigure1Obj, dividedFigure1Info);
+					figureInfoMap.put(dividedFigure2Obj, dividedFigure2Info);
+
+					drawFigures.put(dividedFigure1Obj, div1Fig);
+					drawFigures.put(dividedFigure2Obj, div2Fig);
+
+					figureToButtonMap.putIfAbsent(dividedFigure1Obj, figureToButtonMap.get(figure));
+					figureToButtonMap.putIfAbsent(dividedFigure2Obj, figureToButtonMap.get(figure));
 
 					selectedFigure = null;
 
