@@ -124,6 +124,11 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
+		ToggleGroup layerVisibilityGroup = new ToggleGroup();
+		showLayer.setToggleGroup(layerVisibilityGroup);
+		hideLayer.setToggleGroup(layerVisibilityGroup);
+
+		
 		shadowsChoiceBox.getItems().addAll(ShadowType.values());
 		Label shadowText = new Label("Formato");
 		shadowsChoiceBox.setValue(ShadowType.NONE);
