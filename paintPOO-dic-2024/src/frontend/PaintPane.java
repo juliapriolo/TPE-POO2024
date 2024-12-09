@@ -253,7 +253,7 @@ public class PaintPane extends BorderPane {
 		bringToFrontButton.setOnAction(event -> {
 			if(checkSelectionButton()){
 				layersMap.get(currentLayer).remove(selectedFigure);
-				layersMap.get(currentLayer).add( selectedFigure);
+				layersMap.get(currentLayer).add(selectedFigure);
 				redrawCanvas();
 			}
 		});
@@ -322,15 +322,16 @@ public class PaintPane extends BorderPane {
 		Point eventPoint = new Point(event.getX(), event.getY());
 		boolean found = false;
 		StringBuilder label = new StringBuilder();
+
 		List<Map.Entry<Layer, List<Figure>>> layersList = new ArrayList<>(layersMap.entrySet());
 		Collections.reverse(layersList);
-
 		for (Map.Entry<Layer, List<Figure>> entry : layersList) {
 			Layer layer = entry.getKey();
 			if (layer.getVisibility()) {
 				List<Figure> figures = entry.getValue();
 				for (int i = figures.size() - 1; i >= 0; i--) {
 					Figure figure = figures.get(i);
+
 					if (figureBelongs(figure, eventPoint)) {
 						found = true;
 						label = new StringBuilder(figure.toString());
@@ -349,18 +350,25 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
+
+
 	private void setOnMouseClickedMethod(MouseEvent event) {
 		Point eventPoint = new Point(event.getX(), event.getY());
 		boolean found = false;
 		StringBuilder label = new StringBuilder("Se seleccionó: ");
 
 		if (selectionButton.isSelected()) {
-			for (Map.Entry<Layer, List<Figure>> entry : layersMap.entrySet()) {
+			List<Map.Entry<Layer, List<Figure>>> layersList = new ArrayList<>(layersMap.entrySet());
+			Collections.reverse(layersList);
+
+			for (Map.Entry<Layer, List<Figure>> entry : layersList) {
 				Layer layer = entry.getKey();
 				if (layer.getVisibility()) {
 					List<Figure> figures = entry.getValue();
+
 					for (int i = figures.size() - 1; i >= 0; i--) {
 						Figure figure = figures.get(i);
+
 						if (figureBelongs(figure, eventPoint)) {
 							if (initializedCopyFormatButton && selectedFigure != null) {
 								FigureInfo originFigureInfo = figureInfoMap.get(selectedFigure);
@@ -373,10 +381,13 @@ public class PaintPane extends BorderPane {
 							}
 							found = true;
 							selectedFigure = figure;
+
+							// Actualizar los valores de los controles según la figura seleccionada
 							fillColorPicker.setValue(figureInfoMap.get(selectedFigure).getColor());
 							secondFillColorPicker.setValue(figureInfoMap.get(selectedFigure).getSecondaryColor());
 							shadowsChoiceBox.setValue(figureInfoMap.get(selectedFigure).getShadowType());
 							biselado.setSelected(figureInfoMap.get(selectedFigure).getArcType());
+
 							label.append(figure.toString());
 							break;
 						}
@@ -396,6 +407,7 @@ public class PaintPane extends BorderPane {
 			redrawCanvas();
 		}
 	}
+
 
 	private void setOnMouseDraggedMethod(MouseEvent event) {
 		if (checkSelectionButton()) {
