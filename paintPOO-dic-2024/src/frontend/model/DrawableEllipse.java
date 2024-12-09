@@ -18,26 +18,31 @@ public class DrawableEllipse extends DrawFigure {
 
     @Override
     public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor, Figure figure) {
-        double x = ellipse.getCenterPoint().getX() - ellipse.getWidth() / 2;
-        double y = ellipse.getCenterPoint().getY() - ellipse.getHeight() / 2;
-
+        Point topLeft = getTopLeftCorner();
         double width = ellipse.getWidth();
         double height = ellipse.getHeight();
 
-        setShadowOval(gc, ellipse.getCenterPoint(), ellipse.getHeight(), ellipse.getWidth());
+        setShadowOval(gc, ellipse.getCenterPoint(), height, width);
 
         // Configuración de colores de relleno y borde
         gc.setFill(getGradientColor(info.getColor(), info.getSecondaryColor()));
         gc.setStroke(strokeColor);
 
         // Dibuja la elipse
-        gc.fillOval(x, y, width, height);
-        gc.strokeOval(x, y, width, height);
+        gc.fillOval(topLeft.getX(), topLeft.getY(), width, height);
+        gc.strokeOval(topLeft.getX(), topLeft.getY(), width, height);
 
         if (info.getArcType()) {
             setEllipseArcType(gc);
         }
         gc.setLineWidth(1);
+    }
+
+    private Point getTopLeftCorner() {
+        return new Point(
+                ellipse.getCenterPoint().getX() - ellipse.getWidth() / 2,
+                ellipse.getCenterPoint().getY() - ellipse.getHeight() / 2
+        );
     }
 
     private RadialGradient getGradientColor(Color firstFillColor, Color secondFillColor) {
@@ -48,23 +53,21 @@ public class DrawableEllipse extends DrawFigure {
     }
 
     private void setEllipseArcType(GraphicsContext gc) {
-        double ellipseX = ellipse.getCenterPoint().getX() - ellipse.getWidth() / 2;
-        double ellipseY = ellipse.getCenterPoint().getY() - ellipse.getHeight() / 2;
-
+        Point topLeft = getTopLeftCorner();
         double width = ellipse.getWidth();
         double height = ellipse.getHeight();
 
         gc.setLineWidth(10);
         gc.setStroke(Color.LIGHTGRAY);
-        gc.strokeArc(ellipseX, ellipseY, width, height, 45, 180, ArcType.OPEN);
+        gc.strokeArc(topLeft.getX(), topLeft.getY(), width, height, 45, 180, ArcType.OPEN);
         gc.setStroke(Color.BLACK);
-        gc.strokeArc(ellipseX, ellipseY, width, height, 225, 180, ArcType.OPEN);
+        gc.strokeArc(topLeft.getX(), topLeft.getY(), width, height, 225, 180, ArcType.OPEN);
     }
 
     @Override
     public void rotateRight(FigureInfo info) {
         if (info.getRotate()) {
-            double tempAxis = getFigure().getWidth();
+            double tempAxis = ellipse.getWidth();
             ellipse.setMajorAxis(ellipse.getHeight());
             ellipse.setMinorAxis(tempAxis);
             info.setRotate(false);

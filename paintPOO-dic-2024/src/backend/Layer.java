@@ -1,10 +1,5 @@
 package backend;
 
-
-import backend.interfaces.Figure;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Layer implements Comparable<Layer> {
 
     private final int layerNumber;

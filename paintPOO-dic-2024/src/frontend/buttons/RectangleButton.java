@@ -6,7 +6,6 @@ import backend.model.Rectangle;
 import frontend.model.DrawFigure;
 import frontend.model.DrawableRectangle;
 import frontend.model.FigureInfo;
-import javafx.scene.canvas.GraphicsContext;
 
 public class RectangleButton extends FigureButton {
 

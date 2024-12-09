@@ -14,14 +14,16 @@ public class Rectangle implements Figure {
     public void setStartPoint(Point startPoint) {
         this.topLeft = startPoint;
     }
+
+    public void setEndPoint(Point endPoint){
+        this.bottomRight = endPoint;
+    }
+
     @Override
     public Point getStartPoint() {
         return topLeft;
     }
 
-    public void setEndPoint(Point endPoint){
-        this.bottomRight = endPoint;
-    }
     @Override
     public Point getEndPoint() {
         return bottomRight;
@@ -46,13 +48,11 @@ public class Rectangle implements Figure {
     public void move(double deltaX, double deltaY){
         topLeft.move(deltaX, deltaY);
         bottomRight.move(deltaX, deltaY);
-
     }
 
     @Override
     public boolean contains(Point eventPoint) {
-        return eventPoint.getX() > topLeft.getX() && eventPoint.getX() < bottomRight.getX() &&
-                eventPoint.getY() > topLeft.getY() && eventPoint.getY() < bottomRight.getY();
+        return eventPoint.getX() > topLeft.getX() && eventPoint.getX() < bottomRight.getX() && eventPoint.getY() > topLeft.getY() && eventPoint.getY() < bottomRight.getY();
     }
 
     @Override

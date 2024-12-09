@@ -7,13 +7,13 @@ public class Circle extends Ellipse {
         super(centerPoint, 2*radius, 2*radius);
     }
 
+    private double getRadius() {
+        return getHeight()/2;
+    }
+
     @Override
     public Point getEndPoint(){
         return new Point(getCenterPoint().getX() + getRadius(), getCenterPoint().getY());
-    }
-
-    private double getRadius() {
-        return getHeight()/2;
     }
 
     @Override
@@ -26,6 +26,6 @@ public class Circle extends Ellipse {
 
     @Override
     public String toString() {
-        return String.format("Círculo [Centro: %s, Radio: %.2f]", getCenterPoint(), getHeight()/2);
+        return String.format("Círculo [Centro: %s, Radio: %.2f]", getCenterPoint(), getRadius());
     }
 }

@@ -12,7 +12,7 @@ public class AppMenuBar extends MenuBar {
     private static final String ABOUT = "Acerca de";
     private static final String ABOUT_HEADER = "Paint";
     private static final String ABOUT_CONTENT = "TPE Final POO Diciembre 2024";
-    private static final String HELP = "Help";
+    private static final String HELP = "Ayuda";
     private static final int STATUS = 0;
 
     public AppMenuBar() {

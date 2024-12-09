@@ -1,6 +1,5 @@
 package frontend.model;
 
-import backend.model.Point;
 import javafx.scene.paint.Color;
 
 

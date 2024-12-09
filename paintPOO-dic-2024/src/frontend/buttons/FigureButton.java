@@ -4,7 +4,6 @@ import backend.interfaces.Figure;
 import backend.model.Point;
 import frontend.model.DrawFigure;
 import frontend.model.FigureInfo;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ToggleButton;
 
 

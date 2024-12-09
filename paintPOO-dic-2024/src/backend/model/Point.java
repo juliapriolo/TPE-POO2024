@@ -11,17 +11,16 @@ public class Point implements Movable {
         this.y = y;
     }
 
-    public void move(double deltaX, double deltaY){
-        this.x += deltaX;
-        this.y += deltaY;
-    }
-
     public double getX() {
         return x;
     }
 
-    public double getY() {
-        return y;
+    public double getY() { return y; }
+
+    @Override
+    public void move(double deltaX, double deltaY){
+        this.x += deltaX;
+        this.y += deltaY;
     }
 
     @Override

@@ -14,6 +14,16 @@ public class Ellipse implements Figure {
         this.sMinorAxis = sMinorAxis;
     }
 
+    public void setCenterPoint(Point centerPoint){
+        this.centerPoint = centerPoint;
+    }
+
+    public void setMajorAxis(double sMayorAxis) {
+        this.sMajorAxis = sMayorAxis;
+    }
+
+    public void setMinorAxis(double sMinorAxis) { this.sMinorAxis = sMinorAxis; }
+
     @Override
     public Point getStartPoint() {
         return getCenterPoint();
@@ -24,26 +34,16 @@ public class Ellipse implements Figure {
         return new Point(centerPoint.getX() + getWidth(), centerPoint.getY() + getHeight());
     }
 
-    public void setCenterPoint(Point centerPoint){
-        this.centerPoint = centerPoint;
-    }
-
     @Override
     public Point getCenterPoint() {
         return centerPoint;
     }
 
-    public void setMajorAxis(double sMayorAxis) {
-        this.sMajorAxis = sMayorAxis;
-    }
     @Override
     public double getWidth() {
         return sMajorAxis;
     }
 
-    public void setMinorAxis(double sMinorAxis) {
-        this.sMinorAxis = sMinorAxis;
-    }
     @Override
     public double getHeight() {
         return sMinorAxis;
@@ -54,25 +54,23 @@ public class Ellipse implements Figure {
         centerPoint.move(deltaX, deltaY);
     }
 
-    //Verifica directamente en el rectangulo que la contiene
     @Override
     public boolean contains(Point eventPoint) {
         double xCenter = centerPoint.getX();
         double yCenter = centerPoint.getY();
-        double majorA = sMajorAxis / 2;
-        double minorA = sMinorAxis / 2;
+        double majorA = getWidth() / 2;
+        double minorA = getHeight() / 2;
 
         double x = eventPoint.getX();
         double y = eventPoint.getY();
 
-        // Ecuación de la elipse
         double equation = Math.pow((x - xCenter) / majorA, 2) + Math.pow((y - yCenter) / minorA, 2);
 
-        return equation <= 1; // El punto está dentro de la elipse
+        return equation <= 1;
     }
 
     @Override
     public String toString() {
-        return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", centerPoint, sMajorAxis, sMinorAxis);
+        return String.format("Elipse [Centro: %s, DMayor: %.2f, DMenor: %.2f]", getCenterPoint(), getWidth(), getHeight());
     }
 }

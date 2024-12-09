@@ -19,8 +19,8 @@ public class DrawableRectangle extends DrawFigure {
     @Override
     public void draw(GraphicsContext gc, FigureInfo info, Color strokeColor,Figure figure) {
 
-        double x = Math.min(rectangle.getStartPoint().getX(), rectangle.getEndPoint().getX());
-        double y = Math.min(rectangle.getStartPoint().getY(), rectangle.getEndPoint().getY());
+        double x = rectangle.getStartPoint().getX();
+        double y = rectangle.getStartPoint().getY();
 
         double width = rectangle.getWidth();
         double height = rectangle.getHeight();
@@ -82,13 +82,11 @@ public class DrawableRectangle extends DrawFigure {
 
     public void flipVertically(FigureInfo info) {
         double height = rectangle.getHeight();
-
         customFlipRect(0, height, info, true);
     }
 
     public void flipHorizontally(FigureInfo info) {
         double width = rectangle.getWidth();
-
         customFlipRect(width, 0, info, false);
     }
 

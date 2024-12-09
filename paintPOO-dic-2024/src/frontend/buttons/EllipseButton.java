@@ -6,7 +6,6 @@ import backend.model.Point;
 import frontend.model.DrawFigure;
 import frontend.model.DrawableEllipse;
 import frontend.model.FigureInfo;
-import javafx.scene.canvas.GraphicsContext;
 
 public class EllipseButton extends FigureButton {
 
